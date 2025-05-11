@@ -54,7 +54,7 @@ jobs:
 
 
       - name: Debug SSH and Git configuration
-          run: |
+        run: |
             # Verificar a configuração do Git
             git config --global --list
             
