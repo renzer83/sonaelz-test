@@ -7,12 +7,15 @@ locals {
   location             = yamldecode(file(find_in_parent_folders("location.yaml")))
   common_vars          = yamldecode(file(find_in_parent_folders("common.yaml")))
   subscription_vars    = fileexists("${get_parent_terragrunt_dir()}/subscription.yaml") ? yamldecode(file("${get_parent_terragrunt_dir()}/subscription.yaml")) : {}
+
+  # tmp
+  github_token = get_env("ACTION_REPOS_BUNDLE", "")
 }
 
 terraform {
-#  source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
-  # source =  "git::https://github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
-  source = "git::https://${get_env("ACTION_REPOS_BUNDLE", "")}@github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+# source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+# source =  "git::https://github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+  source = "git::https://${local.github_token}@github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
 }
 
 generate "ephemeral_vars" {
