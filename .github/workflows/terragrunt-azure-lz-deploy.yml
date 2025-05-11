@@ -33,7 +33,7 @@ jobs:
         run: |
           sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.50.0/terragrunt_linux_amd64
           sudo chmod +x /usr/local/bin/terragrunt
-          
+
       - name: Debug environment
         run: |
           echo "Checking if ACTION_REPOS_BUNDLE is defined..."
@@ -46,7 +46,7 @@ jobs:
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz
-          terragrunt run-all validate
+          TERRAGRUNT_DEBUG=true terragrunt run-all validate --log-level=debug
 
   deploy-landing-zone:
     needs: validate
