@@ -17,10 +17,10 @@ env:
   TF_CLI_ARGS: "-no-color"
 
 jobs:
-  test:
-    permissions:
-      id-token: write 
   validate:
+    permissions:
+      id-token: write # Require write permission to Fetch an OIDC token.
+      contents: read # Required to fetch the repository contents.
     env:
       ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
     runs-on: ubuntu-latest
