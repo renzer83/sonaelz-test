@@ -11,7 +11,8 @@ locals {
 }
 
 terraform {
-  source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+  # source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+  source = "git::ssh://git@github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git//"
   # source =  "git::https://github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git//"
 }
 
