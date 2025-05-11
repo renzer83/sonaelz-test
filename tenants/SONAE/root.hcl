@@ -36,6 +36,8 @@ generate "provider" {
 provider "azurerm" {
   features {}
   tenant_id       = "${local.tenant_id}"
+  use_oidc        = true
+  client_id       = "18032d75-8fb3-4230-aa71-da9f3bcb891f"
   subscription_id = "${local.subscription_id}"
 }
 EOF
