@@ -36,7 +36,6 @@ generate "provider" {
 provider "azurerm" {
   features {}
   tenant_id       = "${local.tenant_id}"
-  client_id                  = "${get_env("ARM_CLIENT_ID", "")}"
   subscription_id = "${local.subscription_id}"
 }
 EOF
