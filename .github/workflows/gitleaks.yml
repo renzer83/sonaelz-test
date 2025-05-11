@@ -1,0 +1,14 @@
+---
+name: gitleaks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  gitleaks:
+    uses: sonaemc-kubernetes/github-actions-shared/.github/workflows/gitleaks.yml@main
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+      license: ${{ secrets.GITLEAKS_LICENSE }}

@@ -1,0 +1,12 @@
+# Bump repo release version
+name: Release version
+on:
+  push:
+    branches:
+    - main
+      
+permissions:
+  contents: write
+jobs:
+  guardrails:
+    uses: sonaemc-infrastructure/github-actions-infra/.github/workflows/release-version.yml@main

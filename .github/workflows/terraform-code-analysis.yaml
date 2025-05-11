@@ -1,0 +1,16 @@
+# Action that validates the Terraform code
+name: Terraform Code Analysis
+on:
+  pull_request:
+    branches:
+      - 'main**'
+      - 'develop**'
+permissions:
+  pull-requests: write
+jobs:
+  Terraform-Analysis:
+    uses: sonaemc-infrastructure/github-actions-infra/.github/workflows/terraform-code-analysis.yml@main
+    with:
+      TERRAFORM_VERSION: 1.10.3 #Or latest
+    secrets:
+      token: ${{ secrets.GH_TOKEN }}
