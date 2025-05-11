@@ -1,0 +1,13 @@
+domain: "lz"
+environment: "pp"
+platform: "AzCloudHubPRD"
+
+
+#vhub_name: "vhub"
+#address_prefix: "10.0.0.0/16"
+#sku: "Standard"
+#hub_routing_preference: "ASPath"
+#express_route_gateway: true
+#vpn_gateway: false
+#p2s_gateway: false
+#environment: "pp"

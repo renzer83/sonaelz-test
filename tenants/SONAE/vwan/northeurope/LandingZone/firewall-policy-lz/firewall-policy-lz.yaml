@@ -1,0 +1,58 @@
+# Firewall Policy Landing Zone Configuration
+name: "lz"
+resource_group_name: "rg-lz-ne-network"
+
+# Rule Collection Group Information
+rule_collection_group_name: "policy-rules-ne-lz"
+rule_collection_group_priority: 100
+
+# Network Rule Collections com estrutura correta
+network_rule_collections:
+  - action: "Allow"
+    name: "NetworkRuleCollection"
+    priority: 100
+    rule:
+      - name: "AllowHTTPandHTTPS"
+        description: "Allow HTTP and HTTPS traffic"
+        rule_type: "NetworkRule"
+        protocols: ["TCP"]
+        source_addresses: ["10.0.0.0/8"]
+        destination_addresses: ["*"]
+        destination_ports: ["80", "443"]
+      - name: "AllowDNS"
+        description: "Allow DNS traffic"
+        rule_type: "NetworkRule"
+        protocols: ["UDP"]
+        source_addresses: ["10.0.0.0/8"]
+        destination_addresses: ["*"]
+        destination_ports: ["53"]
+
+# Application Rule Collections com estrutura correta
+application_rule_collections:
+  - action: "Allow"
+    name: "ApplicationRuleCollection"
+    priority: 200
+    rule:
+      - name: "AllowMicrosoft"
+        description: "Allow Microsoft services"
+        source_addresses: ["10.0.0.0/8"]
+        protocols:
+          - port: 443
+            type: "Https"
+        destination_fqdns: ["*.microsoft.com", "*.windowsazure.com"]
+      - name: "AllowAzureMonitor"
+        description: "Allow Azure Monitor"
+        source_addresses: ["10.0.0.0/8"]
+        protocols:
+          - port: 443
+            type: "Https"
+        destination_fqdns: ["*.monitor.azure.com"]
+
+tags:
+  Environment: "Pre-Production"
+  Project: "LandingZone"
+  ManagedBy: "Terragrunt"
+  CostCenter: "IT-AzCloudHubPRD"
+  Lac: "LAC.0000"
+  Owner: "SERVICES"
+  Stream: "AzCloudHubPRD"

@@ -1,0 +1,80 @@
+# Foundation Landing Zone Module Configuration
+
+name: "sonae"
+
+# Resource Group Information
+management_resource_group_name: "lz-management"
+network_resource_group_name: "lz-network"
+
+# Log Analytics Configuration
+la_workspace_name: "law-lz-pp-ne"
+sku_lw: "PerGB2018"
+daily_quota_gb: 5
+retention_in_days: 30
+internet_ingestion_enabled: true
+internet_query_enabled: true
+
+# Storage Account Configuration
+storage_containers:
+  container1:
+    name: "diagnostics"
+    public_access: "private"
+ # container2:
+ #   name: "backups"
+ #   public_access: "private"
+
+# ExpressRoute Configuration
+express_route_flag: false # True to enable ExpressRoute
+service_provider_name: "Equinix"
+peering_location: "Dublin"
+bandwidth_in_mbps: 1000
+peering_type: "AzurePrivatePeering"
+vlan_id: 100
+peer_asn: 65001
+primary_peer_address_prefix: "192.168.0.0/30"
+secondary_peer_address_prefix: "192.168.0.4/30"
+
+# Virtual WAN Configuration
+virtual_wan_name: "vwan"
+
+# Firewall Configuration
+sku_name_fw: "AZFW_Hub"
+sku_tier_fw: "Standard"
+
+# Storage Account SKU
+sku:
+  tier: "Standard"
+  family: "MeteredData"
+
+# Virtual Hubs Configuration
+virtual_hubs:
+  hub1:
+    name: "vhub-neu-lz"
+    location: "northeurope"
+    address_prefix: "10.100.0.0/23"
+
+# Module-specific inputs based on requirements document
+bandwidth_in_mbps: 1000  # ExpressRoute Circuit bandwidth
+daily_quota_gb: 5        # Log Analytics workspace quota
+internet_ingestion_enabled: true  # Log Analytics ingestion setting
+internet_query_enabled: true      # Log Analytics query setting
+la_workspace_name: "law-lz-pp-ne"  # Log Analytics workspace name
+peer_asn: 65001          # ExpressRoute peer ASN
+peering_location: "Amsterdam2"  # ExpressRoute peering location
+peering_type: "AzurePrivatePeering"  # ExpressRoute peering type
+primary_peer_address_prefix: "192.168.0.0/30"  # ExpressRoute primary prefix
+secondary_peer_address_prefix: "192.168.0.4/30"  # ExpressRoute secondary prefix
+retention_in_days: 30    # Log Analytics retention
+service_provider_name: "NOS"  # ExpressRoute service provider
+sku_lw: "PerGB2018"      # Log Analytics SKU
+sku_name_fw: "AZFW_Hub"  # Firewall SKU name
+sku_tier_fw: "Standard"   # Firewall SKU tier
+vlan_id: 100             # ExpressRoute VLAN ID
+
+# Tags
+tags:
+  Environment: "Pre-Production"
+  Lac: "LAC.0000"
+  Project: "LandingZone"
+  ManagedBy: "Terragrunt"
+  CostCenter: "IT-Infrastructure"

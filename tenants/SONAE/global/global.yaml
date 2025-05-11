@@ -1,0 +1,8 @@
+tenant_id: "5757a8da-0477-46d4-bc8a-b0feabdcc71a"
+#tenant_name: "Claranet - Azure LAB"
+# resource_group_name: "landingzone-tfstate-tst-ne" # Definição do resource group onde será guardado o tfstate
+# storage_account_name: "lztfstatetstne" # Definição do storage account onde será guardado o tfstate
+# container_name: "landingzone-tfstate-tst-ne" # Definição do container onde será guardado o tfstate
+resource_group_name: "rg-rrodrigues"
+storage_account_name: "rgrrodrigues"
+container_name: "state"

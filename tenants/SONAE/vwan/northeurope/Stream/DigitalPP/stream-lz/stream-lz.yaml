@@ -1,0 +1,42 @@
+# Variáveis obrigatórias
+domain: "corp"
+environment: "prod"
+platform: "azure"
+stream: "DigitalPP"
+location: "northeurope"
+network_resource_group_name: "rg-digitalpp-network-ne-prd"
+
+# Configuração de Virtual Networks
+virtual_networks:
+  vnet1:
+    name: "vnet-digitalpp-ne-prd"
+    location: "northeurope"
+    address_space: "10.100.0.0/16"
+
+routes:
+  - name: "internet"
+    destinations_type: "CIDR"
+    destinations: ["0.0.0.0/0"]
+    next_hop_type: "ResourceId"
+    use_firewall: true  # Flag simples para indicar que deve usar o firewall
+  
+  # Exemplo com ID de recurso personalizado
+  - name: "custom-route"
+    destinations_type: "CIDR"
+    destinations: ["10.0.0.0/8"]
+    next_hop_type: "ResourceId"
+    next_hop: "/subscriptions/12345-67890/resourceGroups/custom-rg/providers/Microsoft.Network/someResource/customResource"
+
+# Configuração de Route Table
+label_route_table: 
+  - "rt-digitalpp-spoke"
+create_route: true
+defaultRouteTable: false
+
+# Tags para todos os recursos
+tags:
+  Environment: "prod"
+  Stream: "DigitalPP"
+  BusinessUnit: "Digital"
+  CostCenter: "CC123456"
+  ManagedBy: "Terragrunt"
