@@ -52,6 +52,20 @@ jobs:
             echo "ACTION_REPOS_BUNDLE is NOT defined!"
           fi
 
+
+      - name: Debug SSH and Git configuration
+          run: |
+            # Verificar a configuração do Git
+            git config --global --list
+            
+            # Verificar o acesso SSH ao GitHub
+            ssh -Tv git@github.com
+            
+            # Testar clone direto via SSH
+            git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git /tmp/test-clone || echo "Clone failed"
+            ls -la /tmp/test-clone
+                    
+
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz
