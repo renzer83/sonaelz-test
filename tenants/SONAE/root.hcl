@@ -51,22 +51,10 @@ terraform {
       "-lock-timeout=120m"
     ]
   }
-  # before_hook "convert_https_to_ssh" {
-  #   commands = ["init"]
-  #   execute  = ["bash", "-c", "find . -name 'main.tf' -type f -exec grep -l 'git::https://github.com/' {} \\; | xargs -I{} sed -i.bak 's|git::https://github.com/|git@github.com:|g' {} && find . -name '*.bak' -delete"]
-  # }  
-  # before_hook "convert_https_to_https_with_pat" {
-  #   commands = ["init"]
-  #   execute  = ["bash", "-c", "find . -name 'main.tf' -type f -exec grep -l 'git::https://github.com/' {} \\; | xargs -I{} sed -i.bak 's|git::https://github.com/|git::https://${ACTION_REPOS_BUNDLE}@github.com/|g' {} && find . -name '*.bak' -delete"]
-  # }
-  before_hook "convert_https_to_https_with_pat" {
+  before_hook "convert_https_to_ssh" {
     commands = ["init"]
-    execute  = ["bash", "-c", "TOKEN=\"$ACTION_REPOS_BUNDLE\" && find . -name 'main.tf' -type f -exec grep -l 'git::https://github.com/' {} \\; | xargs -I{} sed -i.bak \"s|git::https://github.com/|git::https://$TOKEN@github.com/|g\" {} && find . -name '*.bak' -delete"]
-  }  
-  before_hook "convert_https_to_https_with_pat_hcl" {
-    commands = ["init"]
-    execute  = ["bash", "-c", "find . -name 'terragrunt.hcl' -type f -exec grep -l 'git::https://github.com/' {} \\; | xargs -I{} sed -i.bak \"s|git::https://github.com/|git::https://$ACTION_REPOS_BUNDLE@github.com/|g\" {}"]
-  }  
+    execute  = ["bash", "-c", "find . -name 'main.tf' -type f -exec grep -l 'git::https://github.com/' {} \\; | xargs -I{} sed -i.bak 's|git::https://github.com/|git@github.com:|g' {} && find . -name '*.bak' -delete"]
+  }   
 }
 
 inputs = merge(

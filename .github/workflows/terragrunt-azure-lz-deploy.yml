@@ -23,7 +23,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+          # Configurar o Git para usar SSH
+          git config --global url."git@github.com:".insteadOf "https://github.com/"
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -42,12 +51,7 @@ jobs:
           else
             echo "ACTION_REPOS_BUNDLE is NOT defined!"
           fi
-          
-      - name: Test repository access
-        run: |
-          echo "Testing access to the repository..."
-          git ls-remote https://x-access-token:$ACTION_REPOS_BUNDLE@github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git HEAD || echo "Failed to access repository"
-          
+
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz
