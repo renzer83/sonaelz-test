@@ -43,6 +43,11 @@ jobs:
             echo "ACTION_REPOS_BUNDLE is NOT defined!"
           fi
           
+      - name: Test repository access
+        run: |
+          echo "Testing access to the repository..."
+          git ls-remote https://x-access-token:$ACTION_REPOS_BUNDLE@github.com/sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git HEAD || echo "Failed to access repository"
+          
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz
