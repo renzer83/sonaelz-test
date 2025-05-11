@@ -23,6 +23,9 @@ jobs:
       contents: read # Required to fetch the repository contents.
     env:
       ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"      
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
