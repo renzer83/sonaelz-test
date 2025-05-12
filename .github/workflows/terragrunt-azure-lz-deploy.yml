@@ -98,70 +98,70 @@ jobs:
           cd tenants/SONAE/vwan/$REGION
           terragrunt run-all init --terragrunt-non-interactive          
   
-  validate2:
-    permissions:
-      id-token: write # Require write permission to Fetch an OIDC token.
-      contents: read # Required to fetch the repository contents.
-    env:
-      ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
-      ARM_USE_OIDC: true
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
-      TF_IN_AUTOMATION: true
-      TF_CLI_ARGS: "-no-color"      
-      # TF_CLI_ARGS_validate: "-queue-ignore-errors"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Azure CLI Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
+  # validate:
+  #   permissions:
+  #     id-token: write # Require write permission to Fetch an OIDC token.
+  #     contents: read # Required to fetch the repository contents.
+  #   env:
+  #     ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
+  #     ARM_USE_OIDC: true
+  #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #     ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
+  #     TF_IN_AUTOMATION: true
+  #     TF_CLI_ARGS: "-no-color"      
+  #     # TF_CLI_ARGS_validate: "-queue-ignore-errors"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Azure CLI Login
+  #       uses: azure/login@v2
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
 
-      - name: Start SSH agent for private modules
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      # - name: Setup SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     eval "$(ssh-agent -s)"
-      #     printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-add ~/.ssh/id_rsa
-      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+  #     - name: Start SSH agent for private modules
+  #       uses: webfactory/ssh-agent@v0.5.4
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #     # - name: Setup SSH
+  #     #   run: |
+  #     #     mkdir -p ~/.ssh
+  #     #     eval "$(ssh-agent -s)"
+  #     #     printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #     #     chmod 600 ~/.ssh/id_rsa
+  #     #     ssh-add ~/.ssh/id_rsa
+  #     #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      #     git config --global url."git@github.com:".insteadOf "https://github.com/"
-      #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
+  #     #     git config --global url."git@github.com:".insteadOf "https://github.com/"
+  #     #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
 
-      - name: Manual Terraform Installation
-        run: |
-          TERRAFORM_VERSION="1.10.0"
-          TERRAFORM_PLATFORM="linux_amd64"
-          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+  #     - name: Manual Terraform Installation
+  #       run: |
+  #         TERRAFORM_VERSION="1.10.0"
+  #         TERRAFORM_PLATFORM="linux_amd64"
+  #         TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
           
-          curl -Lo terraform.zip $TERRAFORM_URL
-          unzip terraform.zip
-          sudo mv terraform /usr/local/bin/terraform
-          sudo chmod +x /usr/local/bin/terraform
+  #         curl -Lo terraform.zip $TERRAFORM_URL
+  #         unzip terraform.zip
+  #         sudo mv terraform /usr/local/bin/terraform
+  #         sudo chmod +x /usr/local/bin/terraform
           
-          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
-          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
-          terraform version
+  #         echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+  #         export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
+  #         terraform version
             
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
+  #     - name: Install Terragrunt
+  #       run: |
+  #         sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+  #         sudo chmod +x /usr/local/bin/terragrunt
 
-      - name: Validate Landing Zone configs
-        run: |
-          cd tenants/SONAE/vwan
-          terragrunt run-all init --non-interactive
+  #     - name: Validate Landing Zone configs
+  #       run: |
+  #         cd tenants/SONAE/vwan
+  #         terragrunt run-all init --non-interactive
 
   deploy-landing-zone:
     needs: validate
