@@ -27,9 +27,9 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
-      TF_IN_AUTOMATION: true
-      TF_CLI_ARGS: "-no-color"      
-      TF_CLI_ARGS_validate: "-queue-ignore-errors"
+      # TF_IN_AUTOMATION: true
+      # TF_CLI_ARGS: "-no-color"      
+      # TF_CLI_ARGS_validate: "-queue-ignore-errors"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -66,7 +66,7 @@ jobs:
             
       - name: Validate Landing Zone configs
         run: |
-          TERRAGRUNT_DEBUG=true terragrunt run-all validate --queue-ignore-errors
+          TERRAGRUNT_DEBUG=true terragrunt run-all validate --non-interactive
 
   deploy-landing-zone:
     needs: validate
