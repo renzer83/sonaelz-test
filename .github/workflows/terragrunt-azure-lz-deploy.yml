@@ -39,18 +39,22 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
+          
+      - name: Start SSH agent for private modules
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Setup SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     eval "$(ssh-agent -s)"
+      #     printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-add ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          eval "$(ssh-agent -s)"
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-add ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
-          git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
+      #     git config --global url."git@github.com:".insteadOf "https://github.com/"
+      #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
 
       - name: Setup Terraform (>=1.10.0 <2.0.0)
