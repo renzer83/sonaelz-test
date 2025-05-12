@@ -98,7 +98,7 @@ jobs:
           cd tenants/SONAE/vwan/$REGION
           terragrunt run-all init --terragrunt-non-interactive          
   
-  validate:
+  validate:2
     permissions:
       id-token: write # Require write permission to Fetch an OIDC token.
       contents: read # Required to fetch the repository contents.
