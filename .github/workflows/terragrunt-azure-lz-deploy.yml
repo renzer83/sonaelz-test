@@ -68,6 +68,8 @@ jobs:
           sudo chmod +x /usr/local/bin/terragrunt
             
       - name: Validate Landing Zone configs
+        env:
+          CHECKPOINT_DISABLE: 1      
         run: |
           TF_PATH="$(which terraform)"
           terragrunt run-all validate \
