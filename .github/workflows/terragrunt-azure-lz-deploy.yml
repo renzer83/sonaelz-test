@@ -50,12 +50,7 @@ jobs:
           
       #     # Configurar o Git para usar SSH
       #     git config --global url."git@github.com:".insteadOf "https://github.com/"
-
-
-      - name: Start SSH agent for private modules
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}      
+ 
 
       - name: Terragrunt Validate All
         uses: gruntwork-io/terragrunt-action@v2
@@ -66,7 +61,13 @@ jobs:
           terragrunt-version: v0.77.1                  # sua versão desejada
           tg_dir: 'tenants/SONAE/vwan'                 # raiz onde seu terragrunt.hcl “root” vive
           tg_command: 'run-all validate'           
-
+          INPUT_PRE_EXEC_1: |
+            mkdir -p ~/.ssh \
+              && echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa \
+              && chmod 600 ~/.ssh/id_rsa
+          INPUT_PRE_EXEC_2: |
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
       # - name: Setup Terraform
       #   uses: hashicorp/setup-terraform@v2
       #   with:
