@@ -63,13 +63,13 @@ jobs:
         run: |
           sudo mv /usr/local/bin/terraform /usr/local/bin/terraform.orig
           sudo tee /usr/local/bin/terraform > /dev/null << 'EOF'
-#!/usr/bin/env bash
-if [[ "$1" == "-version" ]]; then
-  /usr/local/bin/terraform.orig -version | head -n1
-else
-  exec /usr/local/bin/terraform.orig "$@"
-fi
-EOF
+          #!/usr/bin/env bash
+          if [[ "$1" == "-version" ]]; then
+            /usr/local/bin/terraform.orig -version | head -n1
+          else
+            exec /usr/local/bin/terraform.orig "$@"
+          fi
+          EOF
           sudo chmod +x /usr/local/bin/terraform          
           
       - name: Install Terragrunt
