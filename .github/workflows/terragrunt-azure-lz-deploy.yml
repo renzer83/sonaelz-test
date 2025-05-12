@@ -54,15 +54,24 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.10.0
-          
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
-            
+
       - name: Validate Landing Zone configs
-        run: |
-          TERRAGRUNT_DEBUG=true terragrunt run-all validate
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          terragrunt-version: v0.50.0
+          terraform-path: /usr/local/bin/terraform
+          terragrunt-commands: run-all
+          terragrunt-args: validate
+          terragrunt-working-dir: ./tenants/SONAE/vwan
+    
+      # - name: Install Terragrunt
+      #   run: |
+      #     sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+      #     sudo chmod +x /usr/local/bin/terragrunt
+            
+      # - name: Validate Landing Zone configs
+      #   run: |
+      #     TERRAGRUNT_DEBUG=true terragrunt run-all validate
 
   deploy-landing-zone:
     needs: validate
