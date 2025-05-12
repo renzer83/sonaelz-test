@@ -72,6 +72,7 @@ jobs:
           CHECKPOINT_DISABLE: 1      
           TF_VERSION: "1.10.0"
         run: |
+          cd tenants/SONAE/vwan
           terragrunt run-all init --non-interactive
 
   deploy-landing-zone:
