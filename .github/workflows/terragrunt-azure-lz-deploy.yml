@@ -40,16 +40,22 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-add -K ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # - name: Setup SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-add ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
           
-          # Configurar o Git para usar SSH
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
+      #     # Configurar o Git para usar SSH
+      #     git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+
+      - name: Start SSH agent for private modules
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}      
 
       - name: Terragrunt Validate All
         uses: gruntwork-io/terragrunt-action@v2
