@@ -54,28 +54,27 @@ jobs:
  
 
       - name: Terragrunt Validate All
-        uses: gruntwork-io/terragrunt-action@v2
-          with:
-            # === Nomes de input válidos ===
-            tf_version: '1.10.0'             # versão do Terraform
-            tg_version: '0.77.1'             # versão do Terragrunt
-            tg_dir:    'tenants/SONAE/vwan'   # onde está o seu root.hcl
-            tg_command:'run-all validate'    # comando a executar
-          env:
-            ARM_USE_OIDC:       true
-            ARM_CLIENT_ID:      ${{ secrets.AZURE_CLIENT_ID }}
-            ARM_TENANT_ID:      ${{ secrets.AZURE_TENANT_ID }}
-            ARM_SUBSCRIPTION_ID:${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            TF_IN_AUTOMATION:   true
-            TG_NON_INTERACTIVE: true
-  
-            # === Injetando o SSH para clonar módulos privados ===
-            INPUT_PRE_EXEC_1: |
-              mkdir -p ~/.ssh \
-              && printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa \
-              && chmod 600 ~/.ssh/id_rsa
-            INPUT_PRE_EXEC_2: |
-              ssh-keyscan github.com >> ~/.ssh/known_hosts
+          uses: gruntwork-io/terragrunt-action@v2
+            with:
+              tf_version: '1.10.0'             # versão do Terraform
+              tg_version: '0.77.1'             # versão do Terragrunt
+              tg_dir:    'tenants/SONAE/vwan'   # onde está o seu root.hcl
+              tg_command:'run-all validate'    # comando a executar
+            env:
+              ARM_USE_OIDC:       true
+              ARM_CLIENT_ID:      ${{ secrets.AZURE_CLIENT_ID }}
+              ARM_TENANT_ID:      ${{ secrets.AZURE_TENANT_ID }}
+              ARM_SUBSCRIPTION_ID:${{ secrets.AZURE_SUBSCRIPTION_ID }}
+              TF_IN_AUTOMATION:   true
+              TG_NON_INTERACTIVE: true
+    
+              # === Injetando o SSH para clonar módulos privados ===
+              INPUT_PRE_EXEC_1: |
+                mkdir -p ~/.ssh \
+                && printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa \
+                && chmod 600 ~/.ssh/id_rsa
+              INPUT_PRE_EXEC_2: |
+                ssh-keyscan github.com >> ~/.ssh/known_hosts
           
       # - name: Setup Terraform
       #   uses: hashicorp/setup-terraform@v2
