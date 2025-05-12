@@ -59,6 +59,7 @@ jobs:
         uses: gruntwork-io/terragrunt-action@v2
         with:
           terragrunt-version: v0.50.0
+          tf_version: 1.10.0
           terraform-path: /usr/local/bin/terraform
           terragrunt-commands: run-all
           terragrunt-args: validate
