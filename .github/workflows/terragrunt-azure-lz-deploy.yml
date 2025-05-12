@@ -61,26 +61,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.10.0"
-        
-      - name: Patch Terraform so '-version' returns only the first line
-        run: |
-          # 1) descubra onde o 'terraform' está instalado
-          TF_BIN="$(which terraform)"
-          echo "Terraform found at: $TF_BIN"
-      
-          # 2) renomeie o original
-          sudo mv "$TF_BIN" "${TF_BIN}.orig"
-      
-          # 3) crie o wrapper que filtra o '-version'
-          sudo tee "$TF_BIN" > /dev/null << 'EOF'
-          #!/usr/bin/env bash
-          if [[ "\$1" == "-version" ]]; then
-            exec "${TF_BIN}.orig" -version | head -n1
-          else
-            exec "${TF_BIN}.orig" "\$@"
-          fi
-          EOF
-          sudo chmod +x "$TF_BIN"
             
       - name: Install Terragrunt
         run: |
