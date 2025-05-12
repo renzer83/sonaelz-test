@@ -1,22 +1,113 @@
 name: Terragrunt Azure LZ Deployment
 
-on:
-  push:
-    branches: [ "main" ]
-    # paths:
-    #   - 'tenants/SONAE/vwan/**'
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'tenants/SONAE/vwan/**'
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ "main" ]
+#     # paths:
+#     #   - 'tenants/SONAE/vwan/**'
+#   pull_request:
+#     branches: [ "main" ]
+#     paths:
+#       - 'tenants/SONAE/vwan/**'
+#   workflow_dispatch:
+  on:
+    push:
+      branches: [ "main" ]
+      paths:
+        - 'tenants/SONAE/vwan/**'
+    pull_request:
+      branches: [ "main" ]
+      paths:
+        - 'tenants/SONAE/vwan/**'
+    workflow_dispatch:
+      inputs:
+        region:
+          description: 'Azure region to deploy'
+          type: string
+          required: true
+          default: 'northeurope'
+        stream:
+          description: 'Specific stream to deploy'
+          type: string
+          required: false  
 
 env:
   ARM_USE_OIDC: true
   TF_IN_AUTOMATION: true
   TF_CLI_ARGS: "-no-color"
+  TERRAFORM_VERSION: "1.10.0"
+  TERRAGRUNT_VERSION: "0.77.1"
+  MAIN_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"  
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      terraform_path: ${{ steps.terraform.outputs.terraform_path }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Terraform
+        id: terraform
+        run: |
+          TERRAFORM_PLATFORM="linux_amd64"
+          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+          
+          curl -Lo terraform.zip $TERRAFORM_URL
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
+          
+          echo "terraform_path=/usr/local/bin/terraform" >> $GITHUB_OUTPUT
+          terraform version
+          
+      - name: Install Terragrunt
+        run: |
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
+          terragrunt --version  
+  
+  validate:
+    needs: setup
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TERRAGRUNT_TFPATH: ${{ needs.setup.outputs.terraform_path }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ env.MAIN_SUBSCRIPTION_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Start SSH agent for private modules
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.MAIN_SUBSCRIPTION_ID }}
+      
+      - name: Validate Terragrunt Configuration
+        run: |
+          # Set region from workflow dispatch or default to northeurope
+          REGION="${{ github.event.inputs.region }}"
+          if [ -z "$REGION" ]; then
+            REGION="northeurope"
+          fi
+          
+          echo "Validating Terragrunt configurations for region: $REGION"
+          cd tenants/SONAE/vwan/$REGION
+          terragrunt run-all init --terragrunt-non-interactive          
+  
   validate:
     permissions:
       id-token: write # Require write permission to Fetch an OIDC token.
