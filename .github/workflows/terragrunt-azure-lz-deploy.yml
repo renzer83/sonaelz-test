@@ -57,10 +57,20 @@ jobs:
       #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: "1.10.0"
+      - name: Manual Terraform Installation
+        run: |
+          TERRAFORM_VERSION="1.10.0"
+          TERRAFORM_PLATFORM="linux_amd64"
+          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+          
+          curl -Lo terraform.zip $TERRAFORM_URL
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
+          
+          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
+          terraform version
             
       - name: Install Terragrunt
         run: |
@@ -73,7 +83,7 @@ jobs:
           terragrunt --version
           which terraform
           which terragrunt
-                    
+
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan
