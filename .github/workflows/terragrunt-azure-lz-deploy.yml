@@ -62,7 +62,7 @@ jobs:
             
       - name: Validate Landing Zone configs
         run: |
-          TERRAGRUNT_DEBUG=true terragrunt run-all validate
+          TG_INPUTS_DEBUG=true terragrunt run-all validate
 
   deploy-landing-zone:
     needs: validate
