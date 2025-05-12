@@ -1,35 +1,25 @@
 name: Terragrunt Azure LZ Deployment
 
-# on:
-#   push:
-#     branches: [ "main" ]
-#     # paths:
-#     #   - 'tenants/SONAE/vwan/**'
-#   pull_request:
-#     branches: [ "main" ]
-#     paths:
-#       - 'tenants/SONAE/vwan/**'
-#   workflow_dispatch:
-  on:
-    push:
-      branches: [ "main" ]
-      paths:
-        - 'tenants/SONAE/vwan/**'
-    pull_request:
-      branches: [ "main" ]
-      paths:
-        - 'tenants/SONAE/vwan/**'
-    workflow_dispatch:
-      inputs:
-        region:
-          description: 'Azure region to deploy'
-          type: string
-          required: true
-          default: 'northeurope'
-        stream:
-          description: 'Specific stream to deploy'
-          type: string
-          required: false  
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'tenants/SONAE/vwan/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'tenants/SONAE/vwan/**'
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'Azure region to deploy'
+        type: string
+        required: true
+        default: 'northeurope'
+      stream:
+        description: 'Specific stream to deploy'
+        type: string
+        required: false  
 
 env:
   ARM_USE_OIDC: true
