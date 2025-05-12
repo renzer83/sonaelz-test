@@ -35,6 +35,11 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
+      - name: Install Terragrunt
+        run: |
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
+                
       - name: Setup Terraform and Terragrunt
         id: setup
         run: |
