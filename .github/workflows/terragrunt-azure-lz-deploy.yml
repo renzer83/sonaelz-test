@@ -77,17 +77,10 @@ jobs:
           sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
           sudo chmod +x /usr/local/bin/terragrunt
 
-      - name: Debug Versions
-        run: |
-          terraform version
-          terragrunt --version
-          which terraform
-          which terragrunt
-
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan
-          terragrunt run-all init --terragrunt-log-level debug --non-interactive
+          terragrunt run-all init --non-interactive
 
   deploy-landing-zone:
     needs: validate
