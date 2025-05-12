@@ -76,7 +76,6 @@ jobs:
       TF_IN_AUTOMATION: true
       TF_CLI_ARGS: "-no-color"      
       # TF_CLI_ARGS_validate: "-queue-ignore-errors"
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Azure CLI Login
