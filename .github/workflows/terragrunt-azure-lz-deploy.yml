@@ -23,6 +23,11 @@ jobs:
       contents: read # Required to fetch the repository contents.
     env:
       ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_IN_AUTOMATION: true
+      TF_CLI_ARGS: "-no-color"      
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
