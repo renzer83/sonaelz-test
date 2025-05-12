@@ -50,26 +50,34 @@ jobs:
           # Configurar o Git para usar SSH
           git config --global url."git@github.com:".insteadOf "https://github.com/"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+      - name: Terragrunt Validate All
+        uses: gruntwork-io/terragrunt-action@v2
         with:
-          terraform_version: "1.10.0"      
+          terraform-path: /usr/local/bin/terraform     # já instalado via setup-terraform
+          terragrunt-version: v0.77.1                  # sua versão desejada
+          tg-dir: 'tenants/SONAE/vwan'                 # raiz onde seu terragrunt.hcl “root” vive
+          tg-command: 'run-all validate'           
+
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_version: "1.10.0"      
           
           
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
+      # - name: Install Terragrunt
+      #   run: |
+      #     sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+      #     sudo chmod +x /usr/local/bin/terragrunt
             
+      # # - name: Validate Landing Zone configs
+      # #   run: |
+      # #     TG_INPUTS_DEBUG=true terragrunt run-all validate
+
       # - name: Validate Landing Zone configs
       #   run: |
-      #     TG_INPUTS_DEBUG=true terragrunt run-all validate
-
-      - name: Validate Landing Zone configs
-        run: |
-          export TG_DISABLE_COMMAND_VALIDATION=true
-          export TG_INPUTS_DEBUG=true
-          terragrunt run-all validate --disable-command-validation          
+      #     export TG_DISABLE_COMMAND_VALIDATION=true
+      #     export TG_INPUTS_DEBUG=true
+      #     terragrunt run-all validate --disable-command-validation          
 
   deploy-landing-zone:
     needs: validate
