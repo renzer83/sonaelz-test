@@ -65,7 +65,7 @@ jobs:
             
       - name: Validate Landing Zone configs
         run: |
-          TERRAGRUNT_DEBUG=true terragrunt run-all validate --terragrunt-ignore-dependency-errors
+          TERRAGRUNT_DEBUG=true terragrunt run-all validate --non-interactive --queue-ignore-errors
 
   deploy-landing-zone:
     needs: validate
