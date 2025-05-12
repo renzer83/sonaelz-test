@@ -53,7 +53,7 @@ jobs:
           git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
 
-          - name: Setup Terraform (>=1.10.0 <2.0.0)
+        - name: Setup Terraform (>=1.10.0 <2.0.0)
           uses: hashicorp/setup-terraform@v2
           with:
             terraform_version: ">=1.10.0 <2.0.0"
