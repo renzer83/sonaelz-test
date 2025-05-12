@@ -87,15 +87,11 @@ jobs:
           sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
           sudo chmod +x /usr/local/bin/terragrunt
             
-      # # - name: Validate Landing Zone configs
-      # #   run: |
-      # #     TG_INPUTS_DEBUG=true terragrunt run-all validate
-
-      # - name: Validate Landing Zone configs
-      #   run: |
-      #     export TG_DISABLE_COMMAND_VALIDATION=true
-      #     export TG_INPUTS_DEBUG=true
-      #     terragrunt run-all validate --disable-command-validation          
+      - name: Validate Landing Zone configs
+        run: |
+          export TG_DISABLE_COMMAND_VALIDATION=true
+          export TG_INPUTS_DEBUG=true
+          terragrunt run-all validate --disable-command-validation          
 
   deploy-landing-zone:
     needs: validate
