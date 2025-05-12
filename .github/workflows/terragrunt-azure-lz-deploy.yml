@@ -59,7 +59,7 @@ jobs:
           tf_version: '1.10.0'             # versão do Terraform
           tg_version: '0.77.1'             # versão do Terragrunt
           tg_dir:    'tenants/SONAE/vwan'   # onde está o seu root.hcl
-          tg_command:'run-all validate'    # comando a executar
+          tg_command: 'run-all validate'    # comando a executar
         env:
           ARM_USE_OIDC:       true
           ARM_CLIENT_ID:      ${{ secrets.AZURE_CLIENT_ID }}
