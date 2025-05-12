@@ -57,7 +57,7 @@ jobs:
       #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
 
-      - name: Setup Terraform (>=1.10.0 <2.0.0)
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.10.0"
@@ -68,8 +68,8 @@ jobs:
           sudo chmod +x /usr/local/bin/terragrunt
             
       - name: Validate Landing Zone configs
-        # env:
-        #   CHECKPOINT_DISABLE: 1      
+        env:
+          CHECKPOINT_DISABLE: 1      
         #   TF_VERSION: "1.10.0"
         run: |
           terragrunt run-all init --non-interactive
