@@ -17,7 +17,7 @@ remote_state {
   backend = "azurerm"
   config = {
     tenant_id            = local.tenant_id
-    subscription_id      = try(local.subscription_vars.state_subscription_id, local.subscription_id)
+    subscription_id      = local.global_vars.tf_subscription_id
     resource_group_name  = local.global_vars.resource_group_name
     storage_account_name = local.global_vars.storage_account_name
     container_name       = local.global_vars.container_name
