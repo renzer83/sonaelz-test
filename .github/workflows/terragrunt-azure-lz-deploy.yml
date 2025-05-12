@@ -62,8 +62,7 @@ jobs:
       - name: Validate Landing Zone configs
         run: |
           cd tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz
-          TERRAGRUNT_DEBUG=true 
-          TERRAGRUNT_DEBUG=true terragrunt validate
+          TERRAGRUNT_DEBUG=true terragrunt run-all validate  --non-interactive
 
   deploy-landing-zone:
     needs: validate
