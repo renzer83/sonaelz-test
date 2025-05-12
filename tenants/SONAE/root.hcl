@@ -17,6 +17,9 @@ remote_state {
   backend = "azurerm"
   config = {
     tenant_id            = local.tenant_id
+    use_oidc             = true
+    use_azuread_auth     = true    
+    client_id       = "18032d75-8fb3-4230-aa71-da9f3bcb891f"
     subscription_id      = local.global_vars.tf_subscription_id
     resource_group_name  = local.global_vars.resource_group_name
     storage_account_name = local.global_vars.storage_account_name
