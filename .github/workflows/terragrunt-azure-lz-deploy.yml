@@ -61,8 +61,7 @@ jobs:
 
       - name: test
         run: |
-          cd tenants/SONAE/vwan
-          terragrunt run-all validate --terragrunt-ignore-dependency-errors
+          cat tenants/SONAE/vwan/northeurope/LandingZone/firewall-policy-lz/terragrunt.hcl
             
       - name: Validate Landing Zone configs
         run: |
