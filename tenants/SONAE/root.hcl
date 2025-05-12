@@ -20,7 +20,7 @@ remote_state {
     use_oidc             = true
     use_azuread_auth     = true    
     client_id       = "18032d75-8fb3-4230-aa71-da9f3bcb891f"
-    subscription_id      = local.global_vars.tf_subscription_id
+    subscription_id      = "c75894a6-4794-4188-8106-c6dc1b92443e"
     resource_group_name  = local.global_vars.resource_group_name
     storage_account_name = local.global_vars.storage_account_name
     container_name       = local.global_vars.container_name
