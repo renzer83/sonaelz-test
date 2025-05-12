@@ -104,9 +104,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
-      - name: Install Terraform and Terragrunt
+      - name: Manual Terraform Installation
         run: |
-          # Install Terraform
+          TERRAFORM_VERSION="1.10.0"
           TERRAFORM_PLATFORM="linux_amd64"
           TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
           
@@ -115,12 +115,14 @@ jobs:
           sudo mv terraform /usr/local/bin/terraform
           sudo chmod +x /usr/local/bin/terraform
           
-          # Install Terragrunt
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
-          
+          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
           terraform version
-          terragrunt --version
+            
+      - name: Install Terragrunt
+        run: |
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
       
       - name: Azure Login
         uses: azure/login@v2
