@@ -22,7 +22,8 @@ terraform {
 }
 
 dependency "firewall_policy" {
-  config_path = "../firewall-policy-lz"
+  config_path  = find_in_parent_folders("firewall-policy-lz")
+
 
   mock_outputs = {
     firewall_policy_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sonae-neu-lz-network/providers/Microsoft.Network/firewallPolicies/policy-sonae-neu-lz"
