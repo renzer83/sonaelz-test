@@ -27,5 +27,8 @@ EOF
 }
 
 inputs = merge(
-  local.firewall_policy_vars, local.location, local.common_vars, local.subscription_vars
-);
+  local.firewall_policy_vars, 
+  local.location, 
+  local.common_vars, 
+  local.subscription_vars
+)
