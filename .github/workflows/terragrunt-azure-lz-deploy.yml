@@ -85,6 +85,63 @@ jobs:
           cd tenants/SONAE/vwan
           terragrunt run-all init --non-interactive
 
+  deploy-landing-zone:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TERRAGRUNT_TFPATH: ${{ needs.setup.outputs.terraform_path }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ env.MAIN_SUBSCRIPTION_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Start SSH agent for private modules
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: Install Terraform and Terragrunt
+        run: |
+          # Install Terraform
+          TERRAFORM_PLATFORM="linux_amd64"
+          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+          
+          curl -Lo terraform.zip $TERRAFORM_URL
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
+          
+          # Install Terragrunt
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
+          
+          terraform version
+          terragrunt --version
+      
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.MAIN_SUBSCRIPTION_ID }}
+      
+      - name: Deploy Landing Zone
+        run: |
+          # Set region from workflow dispatch or default to northeurope
+          REGION="${{ github.event.inputs.region }}"
+          if [ -z "$REGION" ]; then
+            REGION="northeurope"
+          fi
+          
+          echo "Deploying Landing Zone for region: $REGION"
+          cd tenants/SONAE/vwan/$REGION/LandingZone
+          terragrunt run-all plan --non-interactive
+
+
   # deploy-landing-zone:
   #   needs: validate
   #   runs-on: ubuntu-latest
