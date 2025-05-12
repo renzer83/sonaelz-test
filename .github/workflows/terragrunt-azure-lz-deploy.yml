@@ -56,7 +56,7 @@ jobs:
         - name: Setup Terraform (>=1.10.0 <2.0.0)
           uses: hashicorp/setup-terraform@v2
           with:
-            terraform_version: ">=1.10.0 <2.0.0"
+            terraform_version: "1.10.0"
   
         - name: Patch terraform so '-version' só retorna a primeira linha
           run: |
