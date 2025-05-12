@@ -39,7 +39,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
-          
+
       - name: Start SSH agent for private modules
         uses: webfactory/ssh-agent@v0.5.4
         with:
@@ -81,16 +81,11 @@ jobs:
           fi
           EOF
           sudo chmod +x "$TF_BIN"
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v2
-      #   with:
-      #     terraform_version: "1.10.0"      
-          
-          
-      # - name: Install Terragrunt
-      #   run: |
-      #     sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-      #     sudo chmod +x /usr/local/bin/terragrunt
+            
+      - name: Install Terragrunt
+        run: |
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
             
       # # - name: Validate Landing Zone configs
       # #   run: |
