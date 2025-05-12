@@ -87,19 +87,7 @@ jobs:
       - name: Start SSH agent for private modules
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      # - name: Setup SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     eval "$(ssh-agent -s)"
-      #     printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-add ~/.ssh/id_rsa
-      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      #     git config --global url."git@github.com:".insteadOf "https://github.com/"
-      #     git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
- 
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} 
 
       - name: Manual Terraform Installation
         run: |
@@ -126,45 +114,45 @@ jobs:
           cd tenants/SONAE/vwan
           terragrunt run-all init --non-interactive
 
-  # deploy-landing-zone:
-  #   needs: validate
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
+  deploy-landing-zone:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
           
-  #     - name: Deploy Landing Zone
-  #       run: |
-  #         cd tenants/SONAE/vwan
-  #         terragrunt run-all apply --terragrunt-non-interactive \
-  #           --terragrunt-working-dir ./northeurope/LandingZone \
-  #           --terragrunt-working-dir ./westeurope/LandingZone \
-  #           --terragrunt-ignore-external-dependencies
+      - name: Deploy Landing Zone
+        run: |
+          cd tenants/SONAE/vwan
+          terragrunt run-all apply --terragrunt-non-interactive \
+            --terragrunt-working-dir ./northeurope/LandingZone \
+            --terragrunt-working-dir ./westeurope/LandingZone \
+            --terragrunt-ignore-external-dependencies
 
-  # deploy-streams:
-  #   needs: deploy-landing-zone
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       region: ['northeurope', 'westeurope']
-  #   steps:
-  #     - uses: actions/checkout@v3
+  deploy-streams:
+    needs: deploy-landing-zone
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        region: ['northeurope', 'westeurope']
+    steps:
+      - uses: actions/checkout@v3
       
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
           
-  #     - name: Deploy Streams
-  #       run: |
-  #         cd tenants/SONAE/vwan/${{ matrix.region }}/Stream
-  #         terragrunt run-all apply --terragrunt-non-interactive \
-  #           --terragrunt-include-external-dependencies
+      - name: Deploy Streams
+        run: |
+          cd tenants/SONAE/vwan/${{ matrix.region }}/Stream
+          terragrunt run-all apply --terragrunt-non-interactive \
+            --terragrunt-include-external-dependencies
