@@ -61,7 +61,7 @@ jobs:
           tg_version: v0.77.1
           tf_version: 1.10.0
           terraform-path: /usr/local/bin/terraform
-          tg_dir: ./tenants/SONAE/vwan
+          tg_dir: ./tenants/SONAE
           tg_command: 'validate'
     
       # - name: Install Terragrunt
