@@ -50,10 +50,27 @@ jobs:
           # Configurar o Git para usar SSH
           git config --global url."git@github.com:".insteadOf "https://github.com/"
 
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_version: ">=1.10.0"      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "1.11.4"      
+          terraform_version: "1.10.0"
+
+      - name: Patch Terraform to suppress update banner
+        run: |
+          sudo mv /usr/local/bin/terraform /usr/local/bin/terraform.orig
+          sudo tee /usr/local/bin/terraform > /dev/null << 'EOF'
+#!/usr/bin/env bash
+if [[ "$1" == "-version" ]]; then
+  /usr/local/bin/terraform.orig -version | head -n1
+else
+  exec /usr/local/bin/terraform.orig "$@"
+fi
+EOF
+          sudo chmod +x /usr/local/bin/terraform          
           
       - name: Install Terragrunt
         run: |
