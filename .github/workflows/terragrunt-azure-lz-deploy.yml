@@ -89,9 +89,9 @@ jobs:
             
       - name: Validate Landing Zone configs
         run: |
-          export TG_DISABLE_COMMAND_VALIDATION=true
-          export TG_INPUTS_DEBUG=true
-          terragrunt run-all validate --disable-command-validation          
+          TF_PATH="$(which terraform)"
+          terragrunt run-all validate \
+            --terragrunt-terraform-path "$TF_PATH"       
 
   deploy-landing-zone:
     needs: validate
