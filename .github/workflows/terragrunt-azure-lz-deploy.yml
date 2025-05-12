@@ -38,23 +38,17 @@ jobs:
       - name: Setup Terraform and Terragrunt
         id: setup
         run: |
-          # Create bin directory
-          mkdir -p $HOME/bin
-          echo "$HOME/bin" >> $GITHUB_PATH
-          
-          # Install Terraform
+          TERRAFORM_VERSION="1.10.0"
           TERRAFORM_PLATFORM="linux_amd64"
           TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
           
           curl -Lo terraform.zip $TERRAFORM_URL
-          unzip terraform.zip -d $HOME/bin
-          chmod +x $HOME/bin/terraform
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
           
-          # Install Terragrunt
-          curl -Lo $HOME/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
-          chmod +x $HOME/bin/terragrunt
-          
-          # Verify installation
+          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
           terraform version
           terragrunt --version
           
