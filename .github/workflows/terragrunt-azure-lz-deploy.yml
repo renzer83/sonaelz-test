@@ -31,37 +31,8 @@ env:
   TERRAGRUNT_VERSION: "0.77.1"
   MAIN_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"  
 
-jobs:
-  setup:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    outputs:
-      terraform_path: ${{ steps.terraform.outputs.terraform_path }}
-    steps:
-      - uses: actions/checkout@v3      
-      - name: Manual Terraform Installation
-        run: |
-          TERRAFORM_VERSION="1.10.0"
-          TERRAFORM_PLATFORM="linux_amd64"
-          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
-          
-          curl -Lo terraform.zip $TERRAFORM_URL
-          unzip terraform.zip
-          sudo mv terraform /usr/local/bin/terraform
-          sudo chmod +x /usr/local/bin/terraform
-          
-          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
-          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
-          terraform version            
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
-  
+jobs: 
   validate:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -88,6 +59,26 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} 
+
+      - name: Manual Terraform Installation
+        run: |
+          TERRAFORM_VERSION="1.10.0"
+          TERRAFORM_PLATFORM="linux_amd64"
+          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+          
+          curl -Lo terraform.zip $TERRAFORM_URL
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
+          
+          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
+          terraform version
+            
+      - name: Install Terragrunt
+        run: |
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
 
       - name: Validate Landing Zone configs
         run: |
