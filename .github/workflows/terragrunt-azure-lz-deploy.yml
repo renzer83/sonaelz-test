@@ -72,9 +72,8 @@ jobs:
           CHECKPOINT_DISABLE: 1      
           TF_VERSION: "1.10.0"
         run: |
-          TF_PATH="$(which terraform)"
           terragrunt run-all validate \
-            --terragrunt-terraform-path "$TF_PATH"       
+            --terragrunt-terraform-path
 
   deploy-landing-zone:
     needs: validate
