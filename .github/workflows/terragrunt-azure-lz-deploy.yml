@@ -29,8 +29,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
       TF_IN_AUTOMATION: true
       TF_CLI_ARGS: "-no-color"      
-      TERRAGRUNT_TFPATH: /usr/local/bin/terraform
-      
+      # TF_CLI_ARGS_validate: "-queue-ignore-errors"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -51,27 +50,11 @@ jobs:
           # Configurar o Git para usar SSH
           git config --global url."git@github.com:".insteadOf "https://github.com/"
 
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v2
-      #   with:
-      #     terraform_version: ">=1.10.0"      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "1.10.0"
-
-      - name: Patch Terraform to suppress update banner
-        run: |
-          sudo mv /usr/local/bin/terraform /usr/local/bin/terraform.orig
-          sudo tee /usr/local/bin/terraform > /dev/null << 'EOF'
-          #!/usr/bin/env bash
-          if [[ "$1" == "-version" ]]; then
-            /usr/local/bin/terraform.orig -version | head -n1
-          else
-            exec /usr/local/bin/terraform.orig "$@"
-          fi
-          EOF
-          sudo chmod +x /usr/local/bin/terraform          
+          terraform_version: "1.10.0"      
+          
           
       - name: Install Terragrunt
         run: |
