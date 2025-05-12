@@ -61,6 +61,7 @@ jobs:
           terragrunt-version: v0.77.1                  # sua versão desejada
           tg_dir: 'tenants/SONAE/vwan'                 # raiz onde seu terragrunt.hcl “root” vive
           tg_command: 'run-all validate'           
+        env:          
           INPUT_PRE_EXEC_1: |
             mkdir -p ~/.ssh \
               && echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa \
