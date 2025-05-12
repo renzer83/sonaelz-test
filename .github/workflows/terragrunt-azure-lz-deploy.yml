@@ -29,7 +29,8 @@ jobs:
       ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
       TF_IN_AUTOMATION: true
       TF_CLI_ARGS: "-no-color"      
-      # TF_CLI_ARGS_validate: "-queue-ignore-errors"
+      TERRAGRUNT_TFPATH: /usr/local/bin/terraform
+      
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
