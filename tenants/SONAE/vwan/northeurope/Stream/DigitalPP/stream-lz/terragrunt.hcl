@@ -17,7 +17,7 @@ locals {
 }
 
 terraform {
-  source = "git@github.com:sonaemc-iac-modules/terraform-azure-stream-lz.git"
+  source = "git@github.com:sonaemc-iac-modules/terraform-azure-stream-lz.git?ref=feat/update"
 }
 
 dependency "vhub" {

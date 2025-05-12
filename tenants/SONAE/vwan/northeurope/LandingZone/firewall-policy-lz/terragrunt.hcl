@@ -11,7 +11,7 @@ locals {
 }
 
 terraform {
-  source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git"
+  source = "git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git?ref=feat/update"
 }
 
 generate "ephemeral_vars" {

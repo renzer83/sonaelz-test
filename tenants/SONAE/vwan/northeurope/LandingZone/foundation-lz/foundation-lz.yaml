@@ -1,5 +1,7 @@
 # Foundation Landing Zone Module Configuration
-
+domain: "corp"
+environment: "prod"
+platform: "azure"
 name: "sonae"
 
 # Resource Group Information

@@ -18,7 +18,7 @@ locals {
 }
 
 terraform {
-  source = "git@github.com:sonaemc-iac-modules/terraform-azure-foundation-lz.git"
+  source = "git@github.com:sonaemc-iac-modules/terraform-azure-foundation-lz.git?ref=feat/update"
 }
 
 dependency "firewall_policy" {
