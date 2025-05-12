@@ -48,12 +48,10 @@ jobs:
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           
-          eval "$(ssh-agent -s)"
-          
           # Configurar o Git para usar SSH
           git config --global url."git@github.com:".insteadOf "https://github.com/"
-          git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
  
+
       - name: Terragrunt Validate All
         uses: gruntwork-io/terragrunt-action@v2
         with:
