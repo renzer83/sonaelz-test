@@ -51,6 +51,29 @@ jobs:
       #     # Configurar o Git para usar SSH
       #     git config --global url."git@github.com:".insteadOf "https://github.com/"
  
+      - name: Testar clone SSH de módulo
+      run: |
+        set -euo pipefail
+        # Cria uma pasta temporária
+        mkdir -p tmp-clone && cd tmp-clone
+    
+        # Grava a chave e ajusta permissões
+        printf '%s\n' "$SSH_PRIVATE_KEY" > id_rsa
+        chmod 600 id_rsa
+    
+        # Usa o ssh-agent para não deixar a chave exposta em disco demais
+        eval "$(ssh-agent -s)"
+        ssh-add id_rsa
+    
+        # Adiciona o GitHub ao known_hosts
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+    
+        # Tenta o clone via SSH
+        git clone git@github.com:sonaemc-iac-modules/terraform-azure-firewall-policy-lz.git test-repo
+    
+        echo "✅ Clone SSH funcionou!"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}      
 
       - name: Terragrunt Validate All
         uses: gruntwork-io/terragrunt-action@v2
