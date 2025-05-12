@@ -57,21 +57,26 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.10.0"
-  
-      - name: Patch terraform so '-version' só retorna a primeira linha
+        
+      - name: Patch Terraform so '-version' returns only the first line
         run: |
-          # movemos o binário original para 'terraform.orig'
-          sudo mv /usr/local/bin/terraform /usr/local/bin/terraform.orig
-          # injetamos um wrapper minimalista que filtra o '-version'
-          sudo tee /usr/local/bin/terraform > /dev/null <<'EOF'
+          # 1) descubra onde o 'terraform' está instalado
+          TF_BIN="$(which terraform)"
+          echo "Terraform found at: $TF_BIN"
+      
+          # 2) renomeie o original
+          sudo mv "$TF_BIN" "${TF_BIN}.orig"
+      
+          # 3) crie o wrapper que filtra o '-version'
+          sudo tee "$TF_BIN" > /dev/null << 'EOF'
           #!/usr/bin/env bash
           if [[ "\$1" == "-version" ]]; then
-            exec /usr/local/bin/terraform.orig -version | head -n1
+            exec "${TF_BIN}.orig" -version | head -n1
           else
-            exec /usr/local/bin/terraform.orig "\$@"
+            exec "${TF_BIN}.orig" "\$@"
           fi
           EOF
-          sudo chmod +x /usr/local/bin/terraform
+          sudo chmod +x "$TF_BIN"
       # - name: Setup Terraform
       #   uses: hashicorp/setup-terraform@v2
       #   with:
