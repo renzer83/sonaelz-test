@@ -38,6 +38,10 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"      
 
+      - name: Testar conexão com Azure Blob
+        run: |
+          curl -v https://rgrrodrigues.blob.core.windows.net/          
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
