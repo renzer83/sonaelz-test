@@ -94,7 +94,6 @@ jobs:
       #     terragrunt run-all init --non-interactive
 
   deploy-landing-zone:
-    needs: validate
     runs-on: ubuntu-latest
     permissions:
       id-token: write
