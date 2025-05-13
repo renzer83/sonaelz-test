@@ -1,102 +1,41 @@
-# Foundation Landing Zone Module Configuration
+# Variáveis obrigatórias
+domain: "corp"
+environment: "prod"
+platform: "azure"
+stream: "DigitalPP"
+location: "northeurope"
+network_resource_group_name: "rg-digitalpp-network-ne-prd"
 
-name: "lz"
+# Configuração de Virtual Networks
+virtual_networks:
+  vnet1:
+    name: "vnet-digitalpp-ne-prd"
+    location: "northeurope"
+    address_space: "10.100.0.0/16"
 
-# Resource Group Information
-management_resource_group_name: "landingzone-management"
-network_resource_group_name: "landingzone-network"
+routes:
+  - name: "internet"
+    destinations_type: "CIDR"
+    destinations: ["0.0.0.0/0"]
+    next_hop_type: "ResourceId"
+    use_firewall: true  # Flag simples para indicar que deve usar o firewall
+  
+  - name: "custom-route"
+    destinations_type: "CIDR"
+    destinations: ["10.0.0.0/8"]
+    next_hop_type: "ResourceId"
+    next_hop: "/subscriptions/12345-67890/resourceGroups/custom-rg/providers/Microsoft.Network/someResource/customResource"
 
-# Log Analytics Configuration
-la_workspace_name: "lz-la-ws"
-sku_lw: "PerGB2018"
-daily_quota_gb: 5
-retention_in_days: 30
-internet_ingestion_enabled: true
-internet_query_enabled: true
+# Configuração de Route Table
+label_route_table: 
+  - "rt-digitalpp-spoke"
+create_route: true
+defaultRouteTable: false
 
-# Storage Account Configuration
-storage_containers:
-  container1:
-    name: "firewall-logs"
-    public_access: "private"
- # container2:
- #   name: "backups"
- #   public_access: "private"
-
-# Virtual WAN Configuration
-virtual_wan_name: "vwan"
-
-# Firewall Configuration
-sku_name_fw: "AZFW_Hub"
-sku_tier_fw: "Standard"
-
-# Virtual Hubs Configuration
-virtual_hubs:
-  hub1:
-    name: "vhub"
-    location: "northeurope"    # Location is variable gobal, already defined in global.yaml (CHECK)
-    address_prefix: "10.1.0.0/24" 
-
-# ExpressRoute Configuration
-express_route_flag: true # True to enable ExpressRoute
-bandwidth_in_mbps: 1000
-service_provider_name: "NOS" 
-peering_location: "Amsterdam2"
-peering_type: "AzurePrivatePeering"
-vlan_id: 100
-vlan_id: 100
-peer_asn: 65001
-primary_peer_address_prefix: "192.168.0.0/30"
-secondary_peer_address_prefix: "192.168.1.0/30"
-
-sku:
-  tier: "Standard"
-  family: "MeteredData"
-
-# Create Express Route Connection when the express route isn't created in the virtual WAN.
-express_route_connection_flag: false # Flag to create express route connection in the virtual WAN, if you don't want to create express route connection put express_route_conection = false and express_route_flag = true
-# name_expressroute: "expressroute_piloto" # Name of the express route connection
-# express_route_gateway_id: "/subscriptions/568455b7-995d-4044-aeca-9574845e31fb/resourceGroups/network-landingzone-rg-tst-ne/providers/Microsoft.Network/expressRouteGateways/vhub-er-gw-vwan-tst-ne" # Express route gateway id for the express route connection # Dinamico
-# express_route_circuit_peering_id:  "/subscriptions/68d8759a-5348-4aa5-990c-51a4de31cfa4/resourceGroups/landingzone-network-piloto-rg-ne/providers/Microsoft.Network/expressRouteCircuits/lz-piloto-expressroute-vwan-ne/peerings/AzurePrivatePeering" # Express route circuit peering id for the express route connection # passado manualmente
-# authorization_key: "18bc505b-8c49-44a4-9e80-cbac475d6ed3" # Authorization key for the express route connection (must be a GUID) # Passaar valor manualmente
-
-#VPN Sites
-#site_name: "DC_Imopolis"
-#device_vendor: "Cisco"
-#link_name: "DC_Imopolis_ASA"
-#link_ip_address: "193.126.236.100"
-#link_provider_name: "NOS SGPS"
-#link_speed_in_mbps: 50
-#bgp_asn: 64540
-#link_bgp_address: "169.254.22.1"
-
-# VPN Site Configuration
-site_name: "DC_Imopolis"
-device_vendor: "Cisco"
-link_name: "DC_Imopolis_ASA"
-#link_ip_address: "193.126.236.100"
-link_ip_address: "10.10.0.4"
-link_provider_name: "NOS SGPS"
-link_speed_in_mbps: 50
-bgp_asn: 64540
-#link_bgp_address: "169.254.22.1"
-link_bgp_address: "10.11.0.4"
-
-# BGP IP Address Configuration
-#bgp_ip_address_instance_0: ["169.254.22.2"]
-#bgp_ip_address_instance_1: ["169.254.22.2"]
-bgp_ip_address_instance_0: ["10.10.20.2"]
-bgp_ip_address_instance_1: ["10.10.20.2"]
-vpn_gateway_asn: 65515 # Validar se pode ser gerado automaticamente
-
-# Static routes to Default Route Table
-defaultroutetable_static_route_name: "static-to-onprem_v1"
-defaultroutetable_destinations: ["10.10.0.0/16"]
-
-# Tags
+# Tags para todos os recursos
 tags:
-  Environment: "Pre-Production"
-  Lac: "LAC.0000"
-  Project: "LandingZone"
+  Environment: "prod"
+  Stream: "DigitalPP"
+  BusinessUnit: "Digital"
+  CostCenter: "CC123456"
   ManagedBy: "Terragrunt"
-  CostCenter: "IT-Infrastructure"
