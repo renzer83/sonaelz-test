@@ -86,7 +86,7 @@ link_bgp_address: "10.11.0.4"
 #bgp_ip_address_instance_0: ["169.254.22.2"]
 #bgp_ip_address_instance_1: ["169.254.22.2"]
 bgp_ip_address_instance_0: ["10.10.20.2"]
-bgp_ip_address_instance_1: ["10.10.20.2"]
+bgp_ip_address_instance_1: ["10.10.20.2"] 
 vpn_gateway_asn: 65515 # Validar se pode ser gerado automaticamente
 
 # Static routes to Default Route Table
