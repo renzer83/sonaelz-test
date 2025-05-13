@@ -58,9 +58,9 @@ generate "ephemeral_vars" {
   path      = "ephemeral_override.auto.tfvars"
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
-bgp_ip_address_instance_0= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_0)}
-bgp_ip_address_instance_1= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_1)}
-vpn_gateway_asn= ${jsonencode(local.foundation_vars.vpn_gateway_asn)}
+# bgp_ip_address_instance_0= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_0)}
+# bgp_ip_address_instance_1= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_1)}
+# vpn_gateway_asn= ${jsonencode(local.foundation_vars.vpn_gateway_asn)}
 storage_containers = ${jsonencode(local.foundation_vars.storage_containers)}
 sku = ${jsonencode(local.foundation_vars.sku)}
 virtual_hubs = ${jsonencode({
