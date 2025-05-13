@@ -46,10 +46,7 @@ inputs = merge(
         vpn_gateway            = try(hub.vpn_gateway, local.common_vars.vpn_gateway, false)
         p2s_gateway            = try(hub.p2s_gateway, local.common_vars.p2s_gateway, false)
       }
-    },
-  bgp_ip_address_instance_0 = local.foundation_vars.bgp_ip_address_instance_0,
-  bgp_ip_address_instance_1 = local.foundation_vars.bgp_ip_address_instance_1,
-  vpn_gateway_asn           = local.foundation_vars.vpn_gateway_asn      
+    }    
   }
 )
 
