@@ -22,8 +22,7 @@ terraform {
 }
 
 dependency "firewall_policy" {
-  config_path  = find_in_parent_folders("firewall-policy-lz")
-
+  config_path = "../firewall-policy-lz"
 
   mock_outputs = {
     firewall_policy_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-sonae-neu-lz-network/providers/Microsoft.Network/firewallPolicies/policy-sonae-neu-lz"
@@ -56,6 +55,9 @@ generate "ephemeral_vars" {
   path      = "ephemeral_override.auto.tfvars"
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
+bgp_ip_address_instance_0: ${jsonencode(local.foundation_vars.bgp_ip_address_instance_0)}
+bgp_ip_address_instance_1: ${jsonencode(local.foundation_vars.bgp_ip_address_instance_1)}
+vpn_gateway_asn: ${jsonencode(local.foundation_vars.vpn_gateway_asn)}
 storage_containers = ${jsonencode(local.foundation_vars.storage_containers)}
 sku = ${jsonencode(local.foundation_vars.sku)}
 virtual_hubs = ${jsonencode({
