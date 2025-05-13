@@ -33,6 +33,9 @@ dependency "firewall_policy" {
 inputs = merge(
   local.merged_vars,
   {
+    bgp_ip_address_instance_0 = local.foundation_vars.bgp_ip_address_instance_0
+    bgp_ip_address_instance_1 = local.foundation_vars.bgp_ip_address_instance_1
+    vpn_gateway_asn = local.foundation_vars.vpn_gateway_asn    
     virtual_hubs = {
       for key, hub in local.foundation_vars.virtual_hubs : key => {
         name                        = hub.name
