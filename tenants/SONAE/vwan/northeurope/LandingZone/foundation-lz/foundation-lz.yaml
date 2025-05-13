@@ -55,10 +55,10 @@ sku:
 
 # Create Express Route Connection when the express route isn't created in the virtual WAN.
 express_route_connection_flag: false # Flag to create express route connection in the virtual WAN, if you don't want to create express route connection put express_route_conection = false and express_route_flag = true
-# name_expressroute: "expressroute_piloto" # Name of the express route connection
-# express_route_gateway_id: "/subscriptions/568455b7-995d-4044-aeca-9574845e31fb/resourceGroups/network-landingzone-rg-tst-ne/providers/Microsoft.Network/expressRouteGateways/vhub-er-gw-vwan-tst-ne" # Express route gateway id for the express route connection # Dinamico
-# express_route_circuit_peering_id:  "/subscriptions/68d8759a-5348-4aa5-990c-51a4de31cfa4/resourceGroups/landingzone-network-piloto-rg-ne/providers/Microsoft.Network/expressRouteCircuits/lz-piloto-expressroute-vwan-ne/peerings/AzurePrivatePeering" # Express route circuit peering id for the express route connection # passado manualmente
-# authorization_key: "18bc505b-8c49-44a4-9e80-cbac475d6ed3" # Authorization key for the express route connection (must be a GUID) # Passaar valor manualmente
+name_expressroute: "expressroute_piloto" # Name of the express route connection
+express_route_gateway_id: "/subscriptions/568455b7-995d-4044-aeca-9574845e31fb/resourceGroups/network-landingzone-rg-tst-ne/providers/Microsoft.Network/expressRouteGateways/vhub-er-gw-vwan-tst-ne" # Express route gateway id for the express route connection # Dinamico
+express_route_circuit_peering_id:  "/subscriptions/68d8759a-5348-4aa5-990c-51a4de31cfa4/resourceGroups/landingzone-network-piloto-rg-ne/providers/Microsoft.Network/expressRouteCircuits/lz-piloto-expressroute-vwan-ne/peerings/AzurePrivatePeering" # Express route circuit peering id for the express route connection # passado manualmente
+authorization_key: "18bc505b-8c49-44a4-9e80-cbac475d6ed3" # Authorization key for the express route connection (must be a GUID) # Passaar valor manualmente
 
 #VPN Sites
 #site_name: "DC_Imopolis"
