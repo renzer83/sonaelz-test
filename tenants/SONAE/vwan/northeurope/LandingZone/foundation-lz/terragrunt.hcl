@@ -63,6 +63,7 @@ bgp_ip_address_instance_1= ${jsonencode(local.foundation_vars.bgp_ip_address_ins
 vpn_gateway_asn= ${jsonencode(local.foundation_vars.vpn_gateway_asn)}
 defaultroutetable_destinations = ${jsonencode(local.foundation_vars.defaultroutetable_destinations)}
 storage_containers = ${jsonencode(local.foundation_vars.storage_containers)}
+zones = ${jsonencode(local.foundation_vars.zones)}
 sku = ${jsonencode(local.foundation_vars.sku)}
 virtual_hubs = ${jsonencode({
   for key, hub in local.foundation_vars.virtual_hubs : key => {
