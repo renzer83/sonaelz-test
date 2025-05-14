@@ -14,7 +14,7 @@ virtual_networks:
 
 routes:
   # Route to Firewall
-  - name: "internet"
+  - name: "internet" 
     destinations_type: "CIDR"
     destinations: ["0.0.0.0/0"]
     next_hop_type: "ResourceId" 
