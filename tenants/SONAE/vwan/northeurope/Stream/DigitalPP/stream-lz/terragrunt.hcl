@@ -79,6 +79,7 @@ generate "ephemeral_vars" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 label_route_table = ${jsonencode(local.generated_label_route_table)}
+virtual_hub_id = ${jsonencode(dependency.vhub.outputs.virtual_hub_resource_ids)}
 tags = ${jsonencode(local.stream_vars.tags)}
 virtual_networks = ${jsonencode({
   for key, vnet in local.stream_vars.virtual_networks : key => {
