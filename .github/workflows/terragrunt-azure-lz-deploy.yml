@@ -31,123 +31,123 @@ env:
   TERRAGRUNT_VERSION: "0.77.1"
 
 jobs: 
-  validate:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read    
+  # validate:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read    
 
-    env:
-      ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
-      ARM_USE_OIDC: true
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
-      TF_IN_AUTOMATION: true
-      TF_CLI_ARGS: "-no-color"      
-    steps:
-      - uses: actions/checkout@v3
-      - name: Restore Terraform and Terragrunt
-        uses: actions/cache@v3
-        with:
-          path: ~/bin
-          key: ${{ runner.os }}-terraform-${{ env.TERRAFORM_VERSION }}-terragrunt-${{ env.TERRAGRUNT_VERSION }}
+  #   env:
+  #     ACTION_REPOS_BUNDLE: ${{ secrets.ACTION_REPOS_BUNDLE }}
+  #     ARM_USE_OIDC: true
+  #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #     ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
+  #     TF_IN_AUTOMATION: true
+  #     TF_CLI_ARGS: "-no-color"      
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Restore Terraform and Terragrunt
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/bin
+  #         key: ${{ runner.os }}-terraform-${{ env.TERRAFORM_VERSION }}-terragrunt-${{ env.TERRAGRUNT_VERSION }}
       
-      - name: Add tools to PATH
-        run: echo "$HOME/bin" >> $GITHUB_PATH
+  #     - name: Add tools to PATH
+  #       run: echo "$HOME/bin" >> $GITHUB_PATH
 
-      - name: Azure CLI Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
+  #     - name: Azure CLI Login
+  #       uses: azure/login@v2
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"         
 
-      - name: Start SSH agent for private modules
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} 
+  #     - name: Start SSH agent for private modules
+  #       uses: webfactory/ssh-agent@v0.5.4
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} 
 
-      - name: Manual Terraform Installation
-        run: |
-          TERRAFORM_VERSION="1.10.0"
-          TERRAFORM_PLATFORM="linux_amd64"
-          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+  #     - name: Manual Terraform Installation
+  #       run: |
+  #         TERRAFORM_VERSION="1.10.0"
+  #         TERRAFORM_PLATFORM="linux_amd64"
+  #         TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
           
-          curl -Lo terraform.zip $TERRAFORM_URL
-          unzip terraform.zip
-          sudo mv terraform /usr/local/bin/terraform
-          sudo chmod +x /usr/local/bin/terraform
+  #         curl -Lo terraform.zip $TERRAFORM_URL
+  #         unzip terraform.zip
+  #         sudo mv terraform /usr/local/bin/terraform
+  #         sudo chmod +x /usr/local/bin/terraform
           
-          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
-          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
-          terraform version
+  #         echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+  #         export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
+  #         terraform version
             
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
+  #     - name: Install Terragrunt
+  #       run: |
+  #         sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+  #         sudo chmod +x /usr/local/bin/terragrunt
 
-      # - name: Validate Landing Zone configs
-      #   run: |
-      #     cd tenants/SONAE/vwan
-      #     terragrunt run-all init --non-interactive
+  #     # - name: Validate Landing Zone configs
+  #     #   run: |
+  #     #     cd tenants/SONAE/vwan
+  #     #     terragrunt run-all init --non-interactive
 
-  deploy-landing-zone:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    env:
-      TERRAGRUNT_TFPATH: ${{ needs.setup.outputs.terraform_path }}
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-    steps:
-      - uses: actions/checkout@v3
+  # deploy-landing-zone:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   env:
+  #     TERRAGRUNT_TFPATH: ${{ needs.setup.outputs.terraform_path }}
+  #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #   steps:
+  #     - uses: actions/checkout@v3
       
-      - name: Start SSH agent for private modules
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #     - name: Start SSH agent for private modules
+  #       uses: webfactory/ssh-agent@v0.5.4
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
-      - name: Manual Terraform Installation
-        run: |
-          TERRAFORM_VERSION="1.10.0"
-          TERRAFORM_PLATFORM="linux_amd64"
-          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+  #     - name: Manual Terraform Installation
+  #       run: |
+  #         TERRAFORM_VERSION="1.10.0"
+  #         TERRAFORM_PLATFORM="linux_amd64"
+  #         TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
           
-          curl -Lo terraform.zip $TERRAFORM_URL
-          unzip terraform.zip
-          sudo mv terraform /usr/local/bin/terraform
-          sudo chmod +x /usr/local/bin/terraform
+  #         curl -Lo terraform.zip $TERRAFORM_URL
+  #         unzip terraform.zip
+  #         sudo mv terraform /usr/local/bin/terraform
+  #         sudo chmod +x /usr/local/bin/terraform
           
-          echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
-          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
-          terraform version
+  #         echo "TERRAFORM_CLI_PATH=/usr/local/bin/terraform" >> $GITHUB_ENV
+  #         export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"          
+  #         terraform version
             
-      - name: Install Terragrunt
-        run: |
-          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
-          sudo chmod +x /usr/local/bin/terragrunt
+  #     - name: Install Terragrunt
+  #       run: |
+  #         sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.77.1/terragrunt_linux_amd64
+  #         sudo chmod +x /usr/local/bin/terragrunt
           
-      - name: Azure CLI Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"           
+  #     - name: Azure CLI Login
+  #       uses: azure/login@v2
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"           
       
-      - name: Deploy Landing Zone
-        run: |
-          # Set region from workflow dispatch or default to northeurope
-          REGION="${{ github.event.inputs.region }}"
-          if [ -z "$REGION" ]; then
-            REGION="northeurope"
-          fi
+  #     - name: Deploy Landing Zone
+  #       run: |
+  #         # Set region from workflow dispatch or default to northeurope
+  #         REGION="${{ github.event.inputs.region }}"
+  #         if [ -z "$REGION" ]; then
+  #           REGION="northeurope"
+  #         fi
           
-          echo "Deploying Landing Zone for region: $REGION"
-          cd tenants/SONAE/vwan/$REGION/LandingZone
-          terragrunt run-all apply --non-interactive
+  #         echo "Deploying Landing Zone for region: $REGION"
+  #         cd tenants/SONAE/vwan/$REGION/LandingZone
+  #         terragrunt run-all apply --non-interactive
 
   deploy-stream-zone:
     runs-on: ubuntu-latest
