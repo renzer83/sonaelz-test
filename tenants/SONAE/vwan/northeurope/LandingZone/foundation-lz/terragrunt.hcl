@@ -60,6 +60,7 @@ generate "ephemeral_vars" {
   contents = <<EOF
 bgp_ip_address_instance_0= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_0)}
 bgp_ip_address_instance_1= ${jsonencode(local.foundation_vars.bgp_ip_address_instance_1)}
+vpn_site_connections= ${jsonencode(local.foundation_vars.vpn_site_connections)}
 vpn_gateway_asn= ${jsonencode(local.foundation_vars.vpn_gateway_asn)}
 defaultroutetable_destinations = ${jsonencode(local.foundation_vars.defaultroutetable_destinations)}
 storage_containers = ${jsonencode(local.foundation_vars.storage_containers)}
