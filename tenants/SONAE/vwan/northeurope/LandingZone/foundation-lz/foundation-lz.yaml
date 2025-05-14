@@ -94,6 +94,33 @@ vpn_gateway_asn: 65515 # Validar se pode ser gerado automaticamente
 defaultroutetable_static_route_name: "static-to-onprem_v1"
 defaultroutetable_destinations: ["10.10.0.0/16"]
 
+vpn_site_connections:
+  hub1:
+    name: "vpn-conn-hub1-pre"
+    vpn_gateway_key: "hub1"
+    remote_vpn_site_key: "hub1"
+    vpn_links:
+      - name: "link1"
+        vpn_site_key: "hub1"
+        vpn_site_link_number: 0
+        bandwidth_mbps: 10
+        bgp_enabled: true
+        local_azure_ip_address_enabled: false
+        policy_based_traffic_selector_enabled: false
+        ratelimit_enabled: false
+        route_weight: 1
+        shared_key: "AzureA1b2C3"
+        ipsec_policy:
+          dh_group: DHGroup14
+          encryption_algorithm: AES256
+          ike_encryption_algorithm: AES256
+          ike_integrity_algorithm: SHA256
+          integrity_algorithm: SHA256
+          pfs_group: None
+          sa_data_size_kb: "0"       
+          sa_lifetime_sec: "27000"
+
+
 # Tags
 tags:
   Environment: "Pre-Production"
