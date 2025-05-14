@@ -92,7 +92,7 @@ vpn_gateway_asn: 65515 # Validar se pode ser gerado automaticamente
 # Foundation Landing Zone Module Configuration
 # Static routes to Default Route Table
 defaultroutetable_static_route_name: "static-to-onprem_v1"
-defaultroutetable_destinations: ["10.10.0.0/16"]
+defaultroutetable_destinations: ["10.10.0.0/16"] 
 
 vpn_site_connections:
   hub1:
