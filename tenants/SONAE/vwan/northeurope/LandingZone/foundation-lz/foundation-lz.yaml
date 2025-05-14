@@ -15,7 +15,7 @@ internet_ingestion_enabled: true
 internet_query_enabled: true
 
 # Storage Account Configuration
-storage_containers:
+storage_containers: 
   container1:
     name: "firewall-logs"
     public_access: "private"
