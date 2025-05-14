@@ -86,7 +86,7 @@ link_bgp_address: "10.11.0.4"
 #bgp_ip_address_instance_0: ["169.254.22.2"]
 #bgp_ip_address_instance_1: ["169.254.22.2"]
 bgp_ip_address_instance_0: ["169.254.21.1"]
-bgp_ip_address_instance_1: ["169.254.22.1"] 
+bgp_ip_address_instance_1: ["169.254.22.1"]
 zones: ["1", "2", "3"] # BGP IP Address Configuration
 vpn_gateway_asn: 65515 # Validar se pode ser gerado automaticamente
 # Foundation Landing Zone Module Configuration
