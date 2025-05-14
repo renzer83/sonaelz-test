@@ -1,8 +1,1 @@
-subscription_id: "c75894a6-4794-4188-8106-c6dc1b92443e"
-subscription_name: "LAB Claranet"
-environment: "production"
-business_unit: "network"
-#TFSTATE
-# resource_group_name: "rg-rrodrigues"
-# storage_account_name: "rgrrodrigues"
-# container_name: "state"
+subscription_id: "0a2b49fd-c72a-4423-8bfb-666d688888be"
