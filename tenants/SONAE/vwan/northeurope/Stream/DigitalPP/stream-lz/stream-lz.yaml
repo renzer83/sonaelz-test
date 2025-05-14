@@ -13,7 +13,7 @@ virtual_networks:
     address_space: "10.100.0.0/24"
 
 routes:
-  # Route to Firewall
+  # Route to Firewall 
   - name: "internet" 
     destinations_type: "CIDR"
     destinations: ["0.0.0.0/0"]
