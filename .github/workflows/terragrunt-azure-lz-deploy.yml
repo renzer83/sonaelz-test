@@ -147,7 +147,7 @@ jobs:
           
           echo "Deploying Landing Zone for region: $REGION"
           cd tenants/SONAE/vwan/$REGION/LandingZone
-          terragrunt run-all plan --non-interactive
+          terragrunt run-all apply --non-interactive
 
 
   # deploy-landing-zone:
