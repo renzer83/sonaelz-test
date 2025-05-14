@@ -203,7 +203,7 @@ jobs:
           
           echo "Deploying Landing Zone for region: $REGION"
           cd tenants/SONAE/vwan/$REGION/Stream/DigitalPP/stream-lz
-          terragrunt run-all apply --non-interactive
+          terragrunt run-all apply --non-interactive --queue-include-external
             runs-on: ubuntu-latest
             permissions:
               id-token: write
