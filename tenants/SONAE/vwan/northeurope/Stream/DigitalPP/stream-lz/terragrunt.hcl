@@ -50,7 +50,7 @@ inputs = merge(
     #virtual_hub_id = dependency.vhub.outputs.virtual_hub_id
     #firewall_id    = dependency.firewall_policy.outputs.firewall_policy_resource_id 
     label_route_table = local.generated_label_route_table   
-    virtual_hub_id = dependency.vhub.outputs.virtual_hub_resource_ids["hub1"]
+    virtual_hub_id = dependency.vhub.outputs.virtual_hub_resource_ids
     firewall_id    = dependency.vhub.outputs.firewall_ids["hub1"]     
     routes = [
       for route in local.stream_vars.routes : {
