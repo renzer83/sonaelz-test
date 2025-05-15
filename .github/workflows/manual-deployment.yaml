@@ -52,7 +52,7 @@ jobs:
         uses: ./.github/actions/setup-ssh
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-                
+
       - name: Setup Terraform & Terragrunt
         uses: ./.github/actions/setup-terraform-terragrunt
       
@@ -63,6 +63,9 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
       
+      - name: Make script executable
+        run: chmod +x .github/scripts/terragrunt-entrypoint.sh
+                  
       - name: Execute Terragrunt
         run: |
           .github/scripts/terragrunt-entrypoint.sh "${{ github.event.inputs.tenant }}" "${{ github.event.inputs.region }}" "${{ github.event.inputs.target }}" "${{ github.event.inputs.mode }}"
