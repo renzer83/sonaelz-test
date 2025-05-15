@@ -13,7 +13,7 @@ on:
 jobs:
   # Analyze which files changed and determine what to deploy
   analyze-changes:
-    uses: ./.github/templates/change-analysis.yaml
+    uses: ./.github/workflows/template-change-analysis.yaml
 
   # Deploy Landing Zone bundles when they change
   deploy-lz-changes:
@@ -23,7 +23,7 @@ jobs:
       matrix:
         bundle: ${{ fromJson('[' + needs.analyze-changes.outputs.lz_bundles + ']') }}
       fail-fast: false
-    uses: ./.github/workflows/execute-terragrunt.yaml
+    uses: ./.github/workflows/template-execute-terragrunt.yaml
     with:
       tenant: ${{ needs.analyze-changes.outputs.tenant }}
       region: ${{ needs.analyze-changes.outputs.region }}
@@ -42,7 +42,7 @@ jobs:
       matrix:
         stream: ${{ fromJson('[' + needs.analyze-changes.outputs.streams + ']') }}
       fail-fast: false
-    uses: ./.github/templates/execute-terragrunt.yaml
+    uses: ./.github/workflows/template-execute-terragrunt.yaml
     with:
       tenant: ${{ needs.analyze-changes.outputs.tenant }}
       region: ${{ needs.analyze-changes.outputs.region }}
