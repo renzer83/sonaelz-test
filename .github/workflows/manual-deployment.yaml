@@ -1,0 +1,47 @@
+name: "Manual Terragrunt Deployment"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: "Tenant to deploy (e.g., SONAE)"
+        required: true
+        type: choice
+        options:
+          - SONAE
+        default: "SONAE"
+      region:
+        description: "Azure region (e.g., northeurope, westeurope)"
+        required: true
+        type: choice
+        options:
+          - northeurope
+          - westeurope
+        default: "northeurope"
+      target:
+        description: "Bundle/Stream to deploy. Use 'Discovery' workflow to see available options."
+        required: true
+        type: string
+        default: "landingzone-complete"
+      mode:
+        description: "Execution mode (plan or apply)"
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+        default: "plan"
+
+jobs:
+  # Call the reusable template to execute Terragrunt
+  execute-terragrunt:
+    uses: ./.github/workflows/templates/execute-terragrunt.yaml
+    with:
+      tenant: ${{ github.event.inputs.tenant }}
+      region: ${{ github.event.inputs.region }}
+      target: ${{ github.event.inputs.target }}
+      mode: ${{ github.event.inputs.mode }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

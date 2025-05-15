@@ -1,0 +1,64 @@
+name: "Component Discovery"
+
+on:
+  workflow_call:
+    inputs:
+      tenant:
+        description: "Tenant to scan (e.g., SONAE)"
+        required: true
+        type: string
+      region:
+        description: "Azure region (e.g., northeurope, westeurope)"
+        required: true
+        type: string
+    outputs:
+      bundles:
+        description: "Available LZ bundles"
+        value: ${{ jobs.discover.outputs.bundles }}
+      streams:
+        description: "Available streams"
+        value: ${{ jobs.discover.outputs.streams }}
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      bundles: ${{ steps.discovery.outputs.bundles }}
+      streams: ${{ steps.discovery.outputs.streams }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Discover bundles and streams
+        id: discovery
+        run: |
+          TENANT="${{ inputs.tenant }}"
+          REGION="${{ inputs.region }}"
+          LZ_PATH="tenants/$TENANT/vwan/$REGION/LandingZone"
+          STREAMS_PATH="tenants/$TENANT/vwan/$REGION/Stream"
+          
+          # Discover LZ bundles
+          BUNDLE_LIST="landingzone-complete,all-streams"
+          if [ -d "$LZ_PATH" ]; then
+            # List all subdirectories in the LandingZone directory (these are bundle names)
+            for bundle in $(find "$LZ_PATH" -mindepth 1 -maxdepth 1 -type d); do
+              bundle_name=$(basename "$bundle")
+              BUNDLE_LIST+=",$bundle_name"
+            done
+            echo "Found bundles: $BUNDLE_LIST"
+            echo "bundles=$BUNDLE_LIST" >> $GITHUB_OUTPUT
+          else
+            echo "No bundles found at $LZ_PATH"
+            echo "bundles=landingzone-complete,all-streams" >> $GITHUB_OUTPUT
+          fi
+          
+          # Discover streams
+          if [ -d "$STREAMS_PATH" ]; then
+            # List all subdirectories in the Stream directory (these are stream names)
+            STREAM_LIST=$(find "$STREAMS_PATH" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | tr '\n' ',' | sed 's/,$//')
+            echo "streams=$STREAM_LIST" >> $GITHUB_OUTPUT
+            echo "Found streams: $STREAM_LIST"
+          else
+            echo "No streams found at $STREAMS_PATH"
+            echo "streams=" >> $GITHUB_OUTPUT
+          fi

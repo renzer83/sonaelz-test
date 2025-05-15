@@ -1,0 +1,54 @@
+name: "Auto Terragrunt Deployment"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tenants/*/vwan/*/LandingZone/**/*.yaml'
+      - 'tenants/*/vwan/*/LandingZone/**/*.yml'
+      - 'tenants/*/vwan/*/Stream/**/*.yaml'
+      - 'tenants/*/vwan/*/Stream/**/*.yml'
+
+jobs:
+  # Analyze which files changed and determine what to deploy
+  analyze-changes:
+    uses: ./.github/workflows/templates/change-analysis.yaml
+
+  # Deploy Landing Zone bundles when they change
+  deploy-lz-changes:
+    needs: analyze-changes
+    if: ${{ needs.analyze-changes.outputs.has_lz_changes == 'true' }}
+    strategy:
+      matrix:
+        bundle: ${{ fromJson('[' + needs.analyze-changes.outputs.lz_bundles + ']') }}
+      fail-fast: false
+    uses: ./.github/workflows/templates/execute-terragrunt.yaml
+    with:
+      tenant: ${{ needs.analyze-changes.outputs.tenant }}
+      region: ${{ needs.analyze-changes.outputs.region }}
+      target: ${{ matrix.bundle }}
+      mode: "apply"
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  
+  # Deploy Streams when they change
+  deploy-stream-changes:
+    needs: analyze-changes
+    if: ${{ needs.analyze-changes.outputs.has_stream_changes == 'true' && needs.analyze-changes.outputs.streams != '' }}
+    strategy:
+      matrix:
+        stream: ${{ fromJson('[' + needs.analyze-changes.outputs.streams + ']') }}
+      fail-fast: false
+    uses: ./.github/workflows/templates/execute-terragrunt.yaml
+    with:
+      tenant: ${{ needs.analyze-changes.outputs.tenant }}
+      region: ${{ needs.analyze-changes.outputs.region }}
+      target: ${{ matrix.stream }}
+      mode: "apply"
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

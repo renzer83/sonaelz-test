@@ -1,0 +1,72 @@
+name: "Execute Terragrunt"
+
+on:
+  workflow_call:
+    inputs:
+      tenant:
+        description: "Tenant to deploy (e.g., SONAE)"
+        required: true
+        type: string
+      region:
+        description: "Azure region (e.g., northeurope, westeurope)"
+        required: true
+        type: string
+      target:
+        description: "Bundle/Stream to deploy"
+        required: true
+        type: string
+      mode:
+        description: "Execution mode (plan or apply)"
+        required: true
+        type: string
+      subscription_id:
+        description: "Azure subscription ID to use for deployment"
+        required: false
+        type: string
+        default: "c75894a6-4794-4188-8106-c6dc1b92443e"
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      SSH_PRIVATE_KEY:
+        required: true
+
+jobs:
+  terragrunt-execute:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      TF_IN_AUTOMATION: true
+      TF_CLI_ARGS: "-no-color"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Use the template to install Terraform and Terragrunt
+      - uses: ./.github/workflows/templates/install-tools.yaml
+        with:
+          terraform_version: "1.10.0"
+          terragrunt_version: "0.77.1"
+
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ inputs.subscription_id }}
+
+      - name: Start SSH agent for private modules
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}    
+      
+      - name: Execute Terragrunt
+        run: |
+          .github/scripts/terragrunt-entrypoint.sh "${{ inputs.tenant }}" "${{ inputs.region }}" "${{ inputs.target }}" "${{ inputs.mode }}"

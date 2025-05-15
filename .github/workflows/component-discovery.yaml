@@ -1,0 +1,59 @@
+name: "Component Discovery"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: "Tenant to analyze"
+        required: true
+        type: choice
+        options:
+          - SONAE
+        default: "SONAE"
+      region:
+        description: "Azure region"
+        required: true
+        type: choice
+        options:
+          - northeurope
+          - westeurope
+        default: "northeurope"
+
+jobs:
+  # Discover available components
+  discover-components:
+    uses: ./.github/workflows/templates/component-discovery.yaml
+    with:
+      tenant: ${{ github.event.inputs.tenant }}
+      region: ${{ github.event.inputs.region }}
+
+  # Display available components for deployment
+  display-components:
+    needs: discover-components
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display available components
+        run: |
+          echo "==============================================="
+          echo "AVAILABLE COMPONENTS FOR ${{ github.event.inputs.tenant }}/${{ github.event.inputs.region }}"
+          echo "==============================================="
+          
+          echo "\nLANDING ZONE BUNDLES:"
+          echo "------------------"
+          BUNDLES="${{ needs.discover-components.outputs.bundles }}"
+          echo "$BUNDLES" | tr ',' '\n'
+          
+          echo "\nSTREAMS:"
+          echo "-------"
+          STREAMS="${{ needs.discover-components.outputs.streams }}"
+          if [ -n "$STREAMS" ]; then
+            echo "$STREAMS" | tr ',' '\n'
+          else
+            echo "No streams available"
+          fi
+          
+          echo "\n==============================================="
+          echo "To deploy any of these components, use the 'Manual Terragrunt Deployment' workflow"
+          echo "and enter the component name in the 'target' field."
+          echo "\nFor automatic deployment based on changes, push changes to your repository."
+          echo "==============================================="

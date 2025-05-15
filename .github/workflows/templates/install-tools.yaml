@@ -1,0 +1,58 @@
+name: "Install Terraform and Terragrunt"
+
+on:
+  workflow_call:
+    inputs:
+      terraform_version:
+        description: "Terraform version to install"
+        required: false
+        default: "1.10.0"
+        type: string
+      terragrunt_version:
+        description: "Terragrunt version to install"
+        required: false
+        default: "0.77.1"
+        type: string
+    outputs:
+      terraform_path:
+        description: "Path to the installed Terraform binary"
+        value: ${{ jobs.install.outputs.terraform_path }}
+      terragrunt_path:
+        description: "Path to the installed Terragrunt binary"
+        value: ${{ jobs.install.outputs.terragrunt_path }}
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    outputs:
+      terraform_path: ${{ steps.terraform.outputs.terraform_path }}
+      terragrunt_path: ${{ steps.terragrunt.outputs.terragrunt_path }}
+    steps:
+      - name: Setup Terraform
+        id: terraform
+        run: |
+          TERRAFORM_VERSION="${{ inputs.terraform_version }}"
+          TERRAFORM_PLATFORM="linux_amd64"
+          TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TERRAFORM_PLATFORM}.zip"
+          
+          echo "Installing Terraform v${TERRAFORM_VERSION}..."
+          curl -Lo terraform.zip $TERRAFORM_URL
+          unzip terraform.zip
+          sudo mv terraform /usr/local/bin/terraform
+          sudo chmod +x /usr/local/bin/terraform
+          
+          echo "terraform_path=/usr/local/bin/terraform" >> $GITHUB_OUTPUT
+          export TERRAGRUNT_TFPATH="/usr/local/bin/terraform"
+          terraform version
+      
+      - name: Setup Terragrunt
+        id: terragrunt
+        run: |
+          TERRAGRUNT_VERSION="${{ inputs.terragrunt_version }}"
+          
+          echo "Installing Terragrunt v${TERRAGRUNT_VERSION}..."
+          sudo curl -Lo /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
+          sudo chmod +x /usr/local/bin/terragrunt
+          
+          echo "terragrunt_path=/usr/local/bin/terragrunt" >> $GITHUB_OUTPUT
+          terragrunt --version

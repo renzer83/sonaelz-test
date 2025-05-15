@@ -1,0 +1,114 @@
+name: "Change Analysis"
+
+on:
+  workflow_call:
+    outputs:
+      tenant:
+        description: "Tenant detected from changed files"
+        value: ${{ jobs.analyze.outputs.tenant }}
+      region:
+        description: "Region detected from changed files"
+        value: ${{ jobs.analyze.outputs.region }}
+      lz_bundles:
+        description: "Landing Zone bundles detected as changed"
+        value: ${{ jobs.analyze.outputs.lz_bundles }}
+      streams:
+        description: "Streams detected as changed"
+        value: ${{ jobs.analyze.outputs.streams }}
+      has_lz_changes:
+        description: "Whether there are LZ changes"
+        value: ${{ jobs.analyze.outputs.has_lz_changes }}
+      has_stream_changes:
+        description: "Whether there are Stream changes"
+        value: ${{ jobs.analyze.outputs.has_stream_changes }}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    outputs:
+      tenant: ${{ steps.changes.outputs.tenant }}
+      region: ${{ steps.changes.outputs.region }}
+      lz_bundles: ${{ steps.changes.outputs.lz_bundles }}
+      streams: ${{ steps.changes.outputs.streams }}
+      has_lz_changes: ${{ steps.changes.outputs.has_lz_changes }}
+      has_stream_changes: ${{ steps.changes.outputs.has_stream_changes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Need history to get file changes
+      
+      - name: Identify file changes
+        id: changes
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Changed files: $CHANGED_FILES"
+          
+          # Initialize variables
+          HAS_LZ_CHANGES="false"
+          HAS_STREAM_CHANGES="false"
+          TENANT=""
+          REGION=""
+          LZ_BUNDLES=""
+          STREAMS=""
+          
+          # Process each changed file
+          for FILE in $CHANGED_FILES; do
+            # Get tenant and region from path
+            if [[ $FILE =~ tenants/([^/]+)/vwan/([^/]+) ]]; then
+              if [ -z "$TENANT" ]; then
+                TENANT="${BASH_REMATCH[1]}"
+                echo "tenant=$TENANT" >> $GITHUB_OUTPUT
+              fi
+              
+              if [ -z "$REGION" ]; then
+                REGION="${BASH_REMATCH[2]}"
+                echo "region=$REGION" >> $GITHUB_OUTPUT
+              fi
+              
+              # Check if it's a Landing Zone change
+              if [[ $FILE =~ LandingZone/([^/]+) ]]; then
+                HAS_LZ_CHANGES="true"
+                
+                # Extract the bundle name from the path
+                if [[ $FILE =~ LandingZone/([^/]+) ]]; then
+                  BUNDLE_NAME="${BASH_REMATCH[1]}"
+                  
+                  # Add to the LZ_BUNDLES list if not already present
+                  if [[ ! $LZ_BUNDLES =~ $BUNDLE_NAME ]]; then
+                    LZ_BUNDLES+="$BUNDLE_NAME,"
+                  fi
+                fi
+              fi
+              
+              # Check if it's a Stream change
+              if [[ $FILE =~ Stream/([^/]+) ]]; then
+                HAS_STREAM_CHANGES="true"
+                STREAM_NAME="${BASH_REMATCH[1]}"
+                
+                # Add stream to list if not already there
+                if [[ ! $STREAMS =~ $STREAM_NAME ]]; then
+                  STREAMS+="$STREAM_NAME,"
+                fi
+              fi
+            fi
+          done
+          
+          # Remove trailing commas
+          LZ_BUNDLES=${LZ_BUNDLES%,}
+          STREAMS=${STREAMS%,}
+          
+          # Set outputs
+          echo "has_lz_changes=$HAS_LZ_CHANGES" >> $GITHUB_OUTPUT
+          echo "has_stream_changes=$HAS_STREAM_CHANGES" >> $GITHUB_OUTPUT
+          echo "lz_bundles=$LZ_BUNDLES" >> $GITHUB_OUTPUT
+          echo "streams=$STREAMS" >> $GITHUB_OUTPUT
+          
+          # Debug outputs
+          echo "Detected tenant: $TENANT"
+          echo "Detected region: $REGION"
+          echo "Has LZ changes: $HAS_LZ_CHANGES"
+          echo "LZ bundles changed: $LZ_BUNDLES"
+          echo "Has Stream changes: $HAS_STREAM_CHANGES"
+          echo "Streams changed: $STREAMS"
