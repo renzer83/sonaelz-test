@@ -47,7 +47,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
+      - name: Setup SSH
+        uses: ./.github/actions/setup-ssh
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+                
       - name: Setup Terraform & Terragrunt
         uses: ./.github/actions/setup-terraform-terragrunt
       

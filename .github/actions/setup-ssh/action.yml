@@ -1,0 +1,16 @@
+# .github/actions/setup-ssh/action.yml
+name: 'Setup SSH for Terraform modules'
+description: 'Configures SSH for private Terraform modules'
+
+inputs:
+  ssh_private_key:
+    description: 'SSH private key'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start SSH agent for private modules
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ inputs.ssh_private_key }}  

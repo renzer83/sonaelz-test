@@ -15,11 +15,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Start SSH agent for private modules
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  
-            
     - name: Setup Terraform
       shell: bash
       run: |
