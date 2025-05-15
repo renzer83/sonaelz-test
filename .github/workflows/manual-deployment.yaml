@@ -37,15 +37,27 @@ permissions:
   contents: read
 
 jobs:
-  # Call the reusable template to execute Terragrunt
   execute-terragrunt:
-    uses: ./.github/workflows/template-execute-terragrunt.yaml
-    with:
-      tenant: ${{ github.event.inputs.tenant }}
-      region: ${{ github.event.inputs.region }}
-      target: ${{ github.event.inputs.target }}
-      mode: ${{ github.event.inputs.mode }}
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+    runs-on: ubuntu-latest
+    env:
+      ARM_USE_OIDC: true
+      TF_IN_AUTOMATION: true
+      TF_CLI_ARGS: "-no-color"
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform & Terragrunt
+        uses: ./.github/actions/setup-terraform-terragrunt
+      
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: "c75894a6-4794-4188-8106-c6dc1b92443e"
+      
+      - name: Execute Terragrunt
+        run: |
+          .github/scripts/terragrunt-entrypoint.sh "${{ github.event.inputs.tenant }}" "${{ github.event.inputs.region }}" "${{ github.event.inputs.target }}" "${{ github.event.inputs.mode }}"
