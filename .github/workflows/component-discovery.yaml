@@ -22,7 +22,7 @@ on:
 jobs:
   # Discover available components
   discover-components:
-    uses: ./.github/workflows/templates/component-discovery.yaml
+    uses: ./.github/templates/component-discovery.yaml
     with:
       tenant: ${{ github.event.inputs.tenant }}
       region: ${{ github.event.inputs.region }}
