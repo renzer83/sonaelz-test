@@ -74,10 +74,10 @@ elif [[ -d "$BASE_DIR/Stream/$TARGET" ]]; then
     cd "$WORKDIR"
     if [[ "$MODE" == "plan" ]]; then
         # Using --terragrunt-include-external-dependencies ensures LZ dependencies are included
-        terragrunt plan --terragrunt-include-external-dependencies
+        terragrunt plan --non-interactive --queue-include-external
     elif [[ "$MODE" == "apply" ]]; then
         # Using --terragrunt-include-external-dependencies ensures LZ dependencies are included
-        terragrunt apply -auto-approve --terragrunt-include-external-dependencies
+        terragrunt apply --non-interactive --queue-include-external
     else
         echo "Mode not supported: $MODE"
         exit 1
