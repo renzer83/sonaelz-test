@@ -32,6 +32,10 @@ on:
           - apply
         default: "plan"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   # Call the reusable template to execute Terragrunt
   execute-terragrunt:
