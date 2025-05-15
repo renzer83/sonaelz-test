@@ -203,4 +203,4 @@ jobs:
           
           echo "Deploying Landing Zone for region: $REGION"
           cd tenants/SONAE/vwan/$REGION/Stream/DigitalPP/stream-lz
-          terragrunt run-all apply --non-interactive --queue-include-external      
+          terragrunt run-all destroy --non-interactive --queue-include-external      
