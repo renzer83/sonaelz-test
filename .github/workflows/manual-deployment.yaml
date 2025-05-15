@@ -35,7 +35,7 @@ on:
 jobs:
   # Call the reusable template to execute Terragrunt
   execute-terragrunt:
-    uses: ./.github/templates/execute-terragrunt.yaml
+    uses: ./.github/workflows/template-execute-terragrunt.yaml
     with:
       tenant: ${{ github.event.inputs.tenant }}
       region: ${{ github.event.inputs.region }}
