@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        bundle: ${{ fromJson('[' + needs.analyze-changes.outputs.lz_bundles + ']') }}
+        bundle: ${{ fromJSON(needs.analyze-changes.outputs.lz_bundles) }}
       fail-fast: false
     env:
       # Configurações do Azure (usadas por Terraform e az cli)
@@ -91,7 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stream: ${{ fromJson('[' + needs.analyze-changes.outputs.streams + ']') }}
+        stream: ${{ fromJSON(needs.analyze-changes.outputs.streams) }}
       fail-fast: false
     env:
       # Configurações do Azure (usadas por Terraform e az cli)

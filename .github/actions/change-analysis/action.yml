@@ -10,10 +10,10 @@ outputs:
     description: "Region detected from changed files"
     value: ${{ steps.file-changes.outputs.region }}
   lz_bundles:
-    description: "Landing Zone bundles detected as changed"
+    description: "Landing Zone bundles detected as changed (JSON array)"
     value: ${{ steps.file-changes.outputs.lz_bundles }}
   streams:
-    description: "Streams detected as changed"
+    description: "Streams detected as changed (JSON array)"
     value: ${{ steps.file-changes.outputs.streams }}
   has_lz_changes:
     description: "Whether there are LZ changes"
@@ -87,16 +87,44 @@ runs:
         LZ_BUNDLES=${LZ_BUNDLES%,}
         STREAMS=${STREAMS%,}
         
+        # Criar arrays JSON para bundles e streams
+        LZ_BUNDLES_JSON="["
+        STREAMS_JSON="["
+        
+        # Processar bundles para formato JSON
+        if [ -n "$LZ_BUNDLES" ]; then
+          IFS=',' read -ra BUNDLE_ARRAY <<< "$LZ_BUNDLES"
+          for i in "${!BUNDLE_ARRAY[@]}"; do
+            if [ $i -gt 0 ]; then
+              LZ_BUNDLES_JSON+=","
+            fi
+            LZ_BUNDLES_JSON+="\"${BUNDLE_ARRAY[$i]}\""
+          done
+        fi
+        LZ_BUNDLES_JSON+="]"
+        
+        # Processar streams para formato JSON
+        if [ -n "$STREAMS" ]; then
+          IFS=',' read -ra STREAM_ARRAY <<< "$STREAMS"
+          for i in "${!STREAM_ARRAY[@]}"; do
+            if [ $i -gt 0 ]; then
+              STREAMS_JSON+=","
+            fi
+            STREAMS_JSON+="\"${STREAM_ARRAY[$i]}\""
+          done
+        fi
+        STREAMS_JSON+="]"
+        
         # Set outputs
         echo "has_lz_changes=$HAS_LZ_CHANGES" >> $GITHUB_OUTPUT
         echo "has_stream_changes=$HAS_STREAM_CHANGES" >> $GITHUB_OUTPUT
-        echo "lz_bundles=$LZ_BUNDLES" >> $GITHUB_OUTPUT
-        echo "streams=$STREAMS" >> $GITHUB_OUTPUT
+        echo "lz_bundles=$LZ_BUNDLES_JSON" >> $GITHUB_OUTPUT
+        echo "streams=$STREAMS_JSON" >> $GITHUB_OUTPUT
         
         # Debug outputs
         echo "Detected tenant: $TENANT"
         echo "Detected region: $REGION"
         echo "Has LZ changes: $HAS_LZ_CHANGES"
-        echo "LZ bundles changed: $LZ_BUNDLES"
+        echo "LZ bundles changed (JSON): $LZ_BUNDLES_JSON"
         echo "Has Stream changes: $HAS_STREAM_CHANGES"
-        echo "Streams changed: $STREAMS"
+        echo "Streams changed (JSON): $STREAMS_JSON"
