@@ -26,7 +26,7 @@ network_rule_collections:
         source_addresses: ["10.0.0.0/8"]
         destination_addresses: ["*"]
         destination_ports: ["53"] 
-
+ 
 # Application Rule Collections com estrutura correta
 application_rule_collections:
   - action: "Allow"
