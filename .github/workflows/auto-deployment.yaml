@@ -1,3 +1,4 @@
+# auto-deployment.yaml
 name: "Auto Terragrunt Deployment"
 
 on:
@@ -10,45 +11,123 @@ on:
       - 'tenants/*/vwan/*/Stream/**/*.yaml'
       - 'tenants/*/vwan/*/Stream/**/*.yml'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   # Analyze which files changed and determine what to deploy
   analyze-changes:
-    uses: ./.github/workflows/template-change-analysis.yaml
+    runs-on: ubuntu-latest
+    outputs:
+      tenant: ${{ steps.analyze.outputs.tenant }}
+      region: ${{ steps.analyze.outputs.region }}
+      lz_bundles: ${{ steps.analyze.outputs.lz_bundles }}
+      streams: ${{ steps.analyze.outputs.streams }}
+      has_lz_changes: ${{ steps.analyze.outputs.has_lz_changes }}
+      has_stream_changes: ${{ steps.analyze.outputs.has_stream_changes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Need history to get file changes
+      
+      - name: Analyze changes
+        id: analyze
+        uses: ./.github/actions/analyze-changes
 
   # Deploy Landing Zone bundles when they change
   deploy-lz-changes:
     needs: analyze-changes
     if: ${{ needs.analyze-changes.outputs.has_lz_changes == 'true' }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         bundle: ${{ fromJson('[' + needs.analyze-changes.outputs.lz_bundles + ']') }}
       fail-fast: false
-    uses: ./.github/workflows/template-execute-terragrunt.yaml
-    with:
-      tenant: ${{ needs.analyze-changes.outputs.tenant }}
-      region: ${{ needs.analyze-changes.outputs.region }}
-      target: ${{ matrix.bundle }}
-      mode: "apply"
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+    env:
+      # Configurações do Azure (usadas por Terraform e az cli)
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
+      
+      # Configurações do Terraform
+      TF_IN_AUTOMATION: true
+      TF_CLI_ARGS: "-no-color"
+      
+      # SSH para módulos privados
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform & Terragrunt
+        uses: ./.github/actions/setup-terraform-terragrunt
+      
+      - name: Setup SSH
+        uses: ./.github/actions/setup-ssh
+        with:
+          ssh_private_key: ${{ env.SSH_PRIVATE_KEY }}
+      
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.ARM_CLIENT_ID }}
+          tenant-id: ${{ env.ARM_TENANT_ID }}
+          subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
+      
+      - name: Make script executable
+        run: chmod +x .github/scripts/terragrunt-entrypoint.sh
+      
+      - name: Execute Terragrunt
+        run: |
+          .github/scripts/terragrunt-entrypoint.sh "${{ needs.analyze-changes.outputs.tenant }}" "${{ needs.analyze-changes.outputs.region }}" "${{ matrix.bundle }}" "apply"
   
   # Deploy Streams when they change
   deploy-stream-changes:
     needs: analyze-changes
     if: ${{ needs.analyze-changes.outputs.has_stream_changes == 'true' && needs.analyze-changes.outputs.streams != '' }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         stream: ${{ fromJson('[' + needs.analyze-changes.outputs.streams + ']') }}
       fail-fast: false
-    uses: ./.github/workflows/template-execute-terragrunt.yaml
-    with:
-      tenant: ${{ needs.analyze-changes.outputs.tenant }}
-      region: ${{ needs.analyze-changes.outputs.region }}
-      target: ${{ matrix.stream }}
-      mode: "apply"
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+    env:
+      # Configurações do Azure (usadas por Terraform e az cli)
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: "c75894a6-4794-4188-8106-c6dc1b92443e"
+      
+      # Configurações do Terraform
+      TF_IN_AUTOMATION: true
+      TF_CLI_ARGS: "-no-color"
+      
+      # SSH para módulos privados
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform & Terragrunt
+        uses: ./.github/actions/setup-terraform-terragrunt
+      
+      - name: Setup SSH
+        uses: ./.github/actions/setup-ssh
+        with:
+          ssh_private_key: ${{ env.SSH_PRIVATE_KEY }}
+      
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.ARM_CLIENT_ID }}
+          tenant-id: ${{ env.ARM_TENANT_ID }}
+          subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
+      
+      - name: Make script executable
+        run: chmod +x .github/scripts/terragrunt-entrypoint.sh
+      
+      - name: Execute Terragrunt
+        run: |
+          .github/scripts/terragrunt-entrypoint.sh "${{ needs.analyze-changes.outputs.tenant }}" "${{ needs.analyze-changes.outputs.region }}" "${{ matrix.stream }}" "apply"
